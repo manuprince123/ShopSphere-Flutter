@@ -143,16 +143,18 @@ class _CartRow extends StatelessWidget {
                           : null,
                       icon: const Icon(Icons.add_circle_outline),
                     ),
-                    const Spacer(),
-                    IconButton(
-                      tooltip: 'Remove item',
-                      icon: const Icon(Icons.delete_outline),
-                      onPressed: () => context.read<CartController>().update(
-                        item.product.id,
-                        0,
-                      ),
-                    ),
                   ],
+                ),
+                Align(
+                  alignment: Alignment.centerRight,
+                  child: IconButton(
+                    tooltip: 'Remove item',
+                    icon: const Icon(Icons.delete_outline),
+                    onPressed: () => context.read<CartController>().update(
+                      item.product.id,
+                      0,
+                    ),
+                  ),
                 ),
               ],
             ),

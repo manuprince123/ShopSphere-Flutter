@@ -232,11 +232,11 @@ class _CatalogPageState extends State<CatalogPage> {
         child: RefreshIndicator(
           onRefresh: catalog.load,
           child: LayoutBuilder(
-            builder: (context, _) {
-              final screenWidth = MediaQuery.sizeOf(context).width;
-              final columns = screenWidth < 600
+            builder: (context, constraints) {
+              final availableWidth = constraints.maxWidth;
+              final columns = availableWidth < 500
                   ? 2
-                  : screenWidth < 850
+                  : availableWidth < 850
                   ? 3
                   : 4;
               if (widget.listMode) {
@@ -266,7 +266,7 @@ class _CatalogPageState extends State<CatalogPage> {
                   crossAxisCount: columns,
                   crossAxisSpacing: 12,
                   mainAxisSpacing: 12,
-                  mainAxisExtent: 304,
+                  mainAxisExtent: 332,
                 ),
                 itemBuilder: (context, index) =>
                     index >= catalog.products.length
@@ -307,7 +307,7 @@ class ProductCard extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           SizedBox(
-            height: 172,
+            height: 154,
             width: double.infinity,
             child: Stack(
               children: [
@@ -368,28 +368,39 @@ class ProductCard extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(
-                  '\$${product.salePrice.toStringAsFixed(2)}',
-                  style: const TextStyle(
-                    fontWeight: FontWeight.w800,
-                    fontSize: 17,
-                    color: AppTheme.jade,
+                FittedBox(
+                  fit: BoxFit.scaleDown,
+                  alignment: Alignment.centerLeft,
+                  child: Text(
+                    '\$${product.salePrice.toStringAsFixed(2)}',
+                    style: const TextStyle(
+                      fontWeight: FontWeight.w800,
+                      fontSize: 17,
+                      color: AppTheme.jade,
+                    ),
                   ),
                 ),
                 const SizedBox(height: 4),
-                Row(
+                Wrap(
+                  spacing: 6,
+                  runSpacing: 2,
+                  crossAxisAlignment: WrapCrossAlignment.center,
                   children: [
-                    const Icon(
-                      Icons.star_rounded,
-                      size: 16,
-                      color: Color(0xFFE9A63B),
+                    Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        const Icon(
+                          Icons.star_rounded,
+                          size: 16,
+                          color: Color(0xFFE9A63B),
+                        ),
+                        Text(
+                          ' ${product.rating.toStringAsFixed(1)}',
+                          style: const TextStyle(fontSize: 12),
+                        ),
+                      ],
                     ),
-                    Text(
-                      ' ${product.rating.toStringAsFixed(1)}',
-                      style: const TextStyle(fontSize: 12),
-                    ),
-                    if (product.discountPercentage > 0) ...[
-                      const Spacer(),
+                    if (product.discountPercentage > 0)
                       Text(
                         '\$${product.price.toStringAsFixed(0)}',
                         style: const TextStyle(
@@ -398,7 +409,6 @@ class ProductCard extends StatelessWidget {
                           fontSize: 12,
                         ),
                       ),
-                    ],
                   ],
                 ),
               ],

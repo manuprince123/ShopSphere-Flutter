@@ -105,11 +105,11 @@ class _LoadingCardsState extends State<LoadingCards>
     builder: (context, child) =>
         Opacity(opacity: .5 + controller.value * .35, child: child),
     child: LayoutBuilder(
-      builder: (context, _) {
-        final screenWidth = MediaQuery.sizeOf(context).width;
-        final columns = screenWidth < 600
+      builder: (context, constraints) {
+        final availableWidth = constraints.maxWidth;
+        final columns = availableWidth < 500
             ? 2
-            : screenWidth < 850
+            : availableWidth < 850
             ? 3
             : 4;
         return GridView.builder(
@@ -119,7 +119,7 @@ class _LoadingCardsState extends State<LoadingCards>
             crossAxisCount: columns,
             crossAxisSpacing: 12,
             mainAxisSpacing: 12,
-            mainAxisExtent: 290,
+            mainAxisExtent: 332,
           ),
           itemBuilder: (_, _) => Card(
             child: Column(

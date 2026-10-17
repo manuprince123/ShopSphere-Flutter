@@ -218,6 +218,7 @@ class _ProductDetailBodyState extends State<_ProductDetailBody> {
                         if (context.mounted) {
                           ScaffoldMessenger.of(context).showSnackBar(
                             SnackBar(
+                              duration: const Duration(seconds: 2),
                               content: Text(
                                 '$quantity × ${product.title} added to cart',
                               ),
