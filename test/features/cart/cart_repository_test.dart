@@ -16,6 +16,7 @@ const product = Product(id: 7, title: 'Watch', description: 'A watch',
 void main() {
   late MockDio dio;
   late CartRepositoryImpl repository;
+  setUpAll(() => registerFallbackValue(Options()));
   setUp(() async {
     SharedPreferences.setMockInitialValues({});
     dio = MockDio();

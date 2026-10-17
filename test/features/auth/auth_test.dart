@@ -52,6 +52,16 @@ void main() {
     verify(() => auth.logout()).called(1);
   });
 
+  test('bootstrap keeps tokens on a transient network failure', () async {
+    when(() => auth.hasSession()).thenAnswer((_) async => true);
+    when(() => profile.me()).thenAnswer((_) async => const Failed(
+      Failure(FailureKind.network, 'Offline')));
+    final controller = AuthController(auth, Login(auth), profile);
+    await controller.bootstrap();
+    expect(controller.status, AuthStatus.restoreFailure);
+    verifyNever(() => auth.logout());
+  });
+
   test('sign in emits submitting then signed in', () async {
     final completer = Completer<Result<AuthUser>>();
     when(() => auth.login('emilys', 'emilyspass')).thenAnswer((_) => completer.future);
