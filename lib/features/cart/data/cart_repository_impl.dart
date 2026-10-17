@@ -32,14 +32,7 @@ class CartRepositoryImpl implements CartRepository {
   @override
   Future<void> save(List<CartItem> items) async {
     await preferences.setString(key, jsonEncode(items.map((item) => {
-      'product': ProductModel.fromJson({
-        'id': item.product.id, 'title': item.product.title,
-        'description': item.product.description, 'price': item.product.price,
-        'discountPercentage': item.product.discountPercentage,
-        'rating': item.product.rating, 'stock': item.product.stock,
-        'thumbnail': item.product.thumbnail, 'images': item.product.images,
-        'brand': item.product.brand,
-      }).toJson(),
+      'product': ProductModel.fromProduct(item.product).toJson(),
       'quantity': item.quantity,
     }).toList()));
   }

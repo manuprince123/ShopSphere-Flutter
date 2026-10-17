@@ -1,6 +1,21 @@
 import '../domain/product.dart';
 
 class ProductModel extends Product {
+  ProductModel.fromProduct(Product product)
+      : super(
+          id: product.id,
+          title: product.title,
+          description: product.description,
+          price: product.price,
+          discountPercentage: product.discountPercentage,
+          rating: product.rating,
+          stock: product.stock,
+          thumbnail: product.thumbnail,
+          images: product.images,
+          reviews: product.reviews,
+          brand: product.brand,
+        );
+
   ProductModel.fromJson(Map<String, dynamic> json)
       : super(
           id: json['id'] as int,

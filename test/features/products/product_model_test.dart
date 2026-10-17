@@ -24,6 +24,12 @@ void main() {
     expect(second.images, first.images);
     expect(second.reviews.single.comment, 'Excellent');
   });
+  test('copies a domain product into a serializable snapshot', () {
+    final original = ProductModel.fromJson(fixture);
+    final snapshot = ProductModel.fromProduct(original);
+    expect(snapshot.toJson()['reviews'], hasLength(1));
+    expect(snapshot.salePrice, original.salePrice);
+  });
   test('accepts a light list payload with absent optional fields', () {
     final product = ProductModel.fromJson({'id': 3, 'title': 'Cup', 'price': 12});
     expect(product.stock, 0);
