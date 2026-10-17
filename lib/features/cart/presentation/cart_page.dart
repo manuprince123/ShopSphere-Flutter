@@ -13,6 +13,20 @@ class CartPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final cart = context.watch<CartController>();
+    final compactHeight = MediaQuery.sizeOf(context).height < 520;
+    if (compactHeight) {
+      return ListView(padding: const EdgeInsets.only(bottom: 12), children: [
+        Padding(padding: const EdgeInsets.fromLTRB(20, 12, 20, 12),
+          child: Text('Your bag', style: Theme.of(context).textTheme.headlineMedium)),
+        if (!cart.loaded) const SizedBox(height: 160, child: Center(child: CircularProgressIndicator())),
+        if (cart.loaded && cart.items.isEmpty) const SizedBox(height: 180,
+          child: EmptyView(icon: Icons.shopping_bag_outlined, title: 'Your bag is empty',
+            message: 'Find something you love in Explore.')),
+        for (final item in cart.items)
+          Padding(padding: const EdgeInsets.symmetric(horizontal: 16), child: _CartRow(item: item)),
+        if (cart.items.isNotEmpty) _Summary(cart: cart),
+      ]);
+    }
     return Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
       Padding(padding: const EdgeInsets.fromLTRB(20, 20, 20, 18),
         child: Text('Your bag', style: Theme.of(context).textTheme.headlineMedium)),

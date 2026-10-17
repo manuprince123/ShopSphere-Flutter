@@ -30,9 +30,12 @@ class _CatalogPageState extends State<CatalogPage> {
   @override
   Widget build(BuildContext context) {
     final catalog = context.watch<CatalogController>();
+    final compactHeight = MediaQuery.sizeOf(context).height < 520;
     return Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-      Padding(padding: const EdgeInsets.fromLTRB(20, 20, 20, 14),
-        child: Row(children: [
+      Padding(padding: EdgeInsets.fromLTRB(20, compactHeight ? 8 : 20, 20, compactHeight ? 8 : 14),
+        child: compactHeight
+            ? Text('ShopSphere', style: Theme.of(context).textTheme.titleLarge)
+            : Row(children: [
           Expanded(child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
             Text('SHOPSPHERE', style: TextStyle(color: AppTheme.jade,
               fontWeight: FontWeight.w800, letterSpacing: 2, fontSize: 11)),
@@ -52,7 +55,7 @@ class _CatalogPageState extends State<CatalogPage> {
               onPressed: () { searchController.clear(); catalog.setSearch(''); setState(() {}); }),
           ),
         )),
-      const SizedBox(height: 14),
+      SizedBox(height: compactHeight ? 6 : 14),
       SizedBox(height: 48, child: ListView(scrollDirection: Axis.horizontal,
         padding: const EdgeInsets.symmetric(horizontal: 20), children: [
           _chip(context, catalog, null, 'All'),
@@ -63,7 +66,7 @@ class _CatalogPageState extends State<CatalogPage> {
               avatar: const Icon(Icons.refresh, size: 18),
               onPressed: catalog.loadCategories),
         ])),
-      Padding(padding: const EdgeInsets.fromLTRB(20, 12, 20, 10),
+      Padding(padding: EdgeInsets.fromLTRB(20, compactHeight ? 4 : 12, 20, compactHeight ? 4 : 10),
         child: Row(children: [
           Expanded(child: Text(catalog.status == CatalogStatus.ready
               ? '${catalog.total} products' : 'Curated for you',
