@@ -31,9 +31,10 @@ class CartController extends ChangeNotifier {
     final index = items.indexWhere((item) => item.product.id == product.id);
     final next = [...items];
     if (index < 0) {
-      next.add(CartItem(product, quantity.clamp(1, product.stock)));
+      next.add(CartItem(product, quantity.clamp(1, product.stock).toInt()));
     } else {
-      next[index] = next[index].withQuantity((next[index].quantity + quantity).clamp(1, product.stock));
+      next[index] = next[index].withQuantity(
+          (next[index].quantity + quantity).clamp(1, product.stock).toInt());
     }
     items = next;
     notifyListeners();
@@ -47,7 +48,8 @@ class CartController extends ChangeNotifier {
     if (quantity <= 0) {
       next.removeAt(index);
     } else {
-      next[index] = next[index].withQuantity(quantity.clamp(1, next[index].product.stock));
+      next[index] = next[index].withQuantity(
+          quantity.clamp(1, next[index].product.stock).toInt());
     }
     items = next;
     notifyListeners();
