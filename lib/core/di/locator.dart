@@ -15,6 +15,7 @@ import '../../features/products/presentation/catalog_controller.dart';
 import '../../features/products/presentation/product_controller.dart';
 import '../../features/profile/data/profile_repository_impl.dart';
 import '../../features/profile/domain/profile_repository.dart';
+import '../../features/profile/presentation/profile_controller.dart';
 import '../network/api_client.dart';
 
 final sl = GetIt.instance;
@@ -35,4 +36,5 @@ Future<void> configureDependencies() async {
   sl.registerFactory<CatalogController>(() => CatalogController(
       sl<ProductRepository>(), GetProducts(sl<ProductRepository>())));
   sl.registerFactory<ProductController>(() => ProductController(GetProduct(sl<ProductRepository>())));
+  sl.registerFactory<ProfileController>(() => ProfileController(sl<ProfileRepository>()));
 }
