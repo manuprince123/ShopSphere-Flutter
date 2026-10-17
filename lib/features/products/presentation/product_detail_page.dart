@@ -128,7 +128,8 @@ class _ProductDetailBodyState extends State<_ProductDetailBody> {
         const SizedBox(height: 6),
         Text(product.title, style: Theme.of(context).textTheme.headlineMedium),
         const SizedBox(height: 12),
-        Row(
+        Wrap(
+          crossAxisAlignment: WrapCrossAlignment.center,
           children: [
             const Icon(Icons.star_rounded, color: Color(0xFFE9A63B), size: 20),
             Text(

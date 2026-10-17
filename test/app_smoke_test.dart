@@ -11,6 +11,7 @@ import 'package:shopsphere/features/products/domain/product.dart';
 import 'package:shopsphere/features/products/domain/product_repository.dart';
 import 'package:shopsphere/features/products/presentation/catalog_controller.dart';
 import 'package:shopsphere/features/products/presentation/product_controller.dart';
+import 'package:shopsphere/features/products/presentation/product_detail_page.dart';
 import 'package:shopsphere/features/profile/domain/profile_repository.dart';
 import 'package:shopsphere/features/profile/presentation/profile_controller.dart';
 
@@ -141,7 +142,15 @@ void main() {
     final cart = FakeCartRepository();
     registerFakes(FakeProductRepository(withProduct: true), cart);
 
-    await tester.pumpWidget(const ShopSphereApp());
+    await tester.pumpWidget(
+      const MediaQuery(
+        data: MediaQueryData(
+          size: Size(390, 844),
+          textScaler: TextScaler.linear(1.3),
+        ),
+        child: ShopSphereApp(),
+      ),
+    );
     await tester.pumpAndSettle();
     await tester.enterText(find.byType(TextFormField).first, 'emilys');
     await tester.enterText(find.byType(TextFormField).last, 'emilyspass');
@@ -151,8 +160,17 @@ void main() {
     expect(find.text('Everyday Backpack'), findsOneWidget);
     await tester.tap(find.text('Everyday Backpack'));
     await advance(tester);
-    expect(find.text('Customer reviews'), findsOneWidget);
-    await tester.ensureVisible(find.text('Add to cart'));
+    expect(find.text('Everyday Backpack'), findsOneWidget);
+    await tester.scrollUntilVisible(
+      find.text('Add to cart'),
+      250,
+      scrollable: find
+          .descendant(
+            of: find.byType(ProductDetailPage),
+            matching: find.byType(Scrollable),
+          )
+          .first,
+    );
     await tester.tap(find.text('Add to cart'));
     await advance(tester);
     expect(cart.stored.single.quantity, 1);
