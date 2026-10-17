@@ -64,4 +64,12 @@ void main() {
     expect(cart.items, hasLength(1));
     expect(cart.checkoutStatus, CheckoutStatus.failure);
   });
+  test('clearing a session removes persisted cart items', () async {
+    final repo = FakeCartRepository();
+    final cart = CartController(repo, const CalculateCartTotals());
+    await cart.add(bag, 1);
+    await cart.clear();
+    expect(cart.count, 0);
+    expect(repo.stored, isEmpty);
+  });
 }
