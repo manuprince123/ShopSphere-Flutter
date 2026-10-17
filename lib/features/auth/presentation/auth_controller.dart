@@ -4,7 +4,7 @@ import '../../../core/error/failure.dart';
 import '../../profile/domain/profile_repository.dart';
 import '../domain/auth.dart';
 
-enum AuthStatus { checking, signedOut, submitting, signedIn }
+enum AuthStatus { checking, restoreFailure, signedOut, submitting, signedIn }
 
 class AuthController extends ChangeNotifier {
   AuthController(this.repository, this.loginUseCase, this.profileRepository);
@@ -17,6 +17,8 @@ class AuthController extends ChangeNotifier {
   String? message;
 
   Future<void> bootstrap() async {
+    status = AuthStatus.checking;
+    notifyListeners();
     try {
       if (!await repository.hasSession()) {
         status = AuthStatus.signedOut;
@@ -26,14 +28,20 @@ class AuthController extends ChangeNotifier {
           user = value;
           status = AuthStatus.signedIn;
         } else {
-          await repository.logout();
-          status = AuthStatus.signedOut;
-          message = 'Your session has expired. Please sign in again.';
+          final failure = (result as Failed<AuthUser>).failure;
+          if (failure.kind == FailureKind.unauthorized) {
+            await repository.logout();
+            status = AuthStatus.signedOut;
+            message = failure.message;
+          } else {
+            status = AuthStatus.restoreFailure;
+            message = failure.message;
+          }
         }
       }
     } catch (_) {
-      status = AuthStatus.signedOut;
-      message = 'Could not restore your session. Please sign in.';
+      status = AuthStatus.restoreFailure;
+      message = 'Could not restore your session. Please retry.';
     }
     notifyListeners();
   }

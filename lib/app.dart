@@ -3,6 +3,7 @@ import 'package:provider/provider.dart';
 
 import 'core/di/locator.dart';
 import 'core/theme/app_theme.dart';
+import 'core/widgets/state_views.dart';
 import 'features/auth/presentation/auth_controller.dart';
 import 'features/auth/presentation/login_page.dart';
 import 'features/cart/presentation/cart_controller.dart';
@@ -24,6 +25,10 @@ class ShopSphereApp extends StatelessWidget {
       theme: AppTheme.light,
       home: Consumer<AuthController>(builder: (context, auth, _) {
         if (auth.status == AuthStatus.checking) return const SplashPage();
+        if (auth.status == AuthStatus.restoreFailure) {
+          return Scaffold(body: ErrorView(message: auth.message ?? 'Could not restore your session.',
+            onRetry: auth.bootstrap));
+        }
         if (auth.status == AuthStatus.signedOut || auth.status == AuthStatus.submitting) {
           return const LoginPage();
         }
