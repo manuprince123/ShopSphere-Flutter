@@ -76,6 +76,15 @@ class CartController extends ChangeNotifier {
     return false;
   }
 
+  Future<void> clear() async {
+    items = [];
+    checkoutFailure = null;
+    checkoutStatus = CheckoutStatus.idle;
+    orderId = null;
+    notifyListeners();
+    await repository.save(items);
+  }
+
   void resetCheckout() {
     checkoutStatus = CheckoutStatus.idle;
     notifyListeners();

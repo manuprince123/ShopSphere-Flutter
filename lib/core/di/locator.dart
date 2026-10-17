@@ -28,10 +28,11 @@ Future<void> configureDependencies() async {
   sl.registerSingleton<ProfileRepository>(ProfileRepositoryImpl(sl<ApiClient>().dio));
   sl.registerSingleton<ProductRepository>(ProductRepositoryImpl(sl<ApiClient>().dio));
   sl.registerSingleton<CartRepository>(CartRepositoryImpl(preferences, sl<ApiClient>().dio));
+  sl.registerSingleton<CartController>(CartController(sl<CartRepository>(), const CalculateCartTotals()));
   sl.registerSingleton<AuthController>(AuthController(sl<AuthRepository>(),
-      Login(sl<AuthRepository>()), sl<ProfileRepository>()));
+      Login(sl<AuthRepository>()), sl<ProfileRepository>(),
+      onSessionCleared: () => sl<CartController>().clear()));
   sl.registerFactory<CatalogController>(() => CatalogController(
       sl<ProductRepository>(), GetProducts(sl<ProductRepository>())));
   sl.registerFactory<ProductController>(() => ProductController(GetProduct(sl<ProductRepository>())));
-  sl.registerSingleton<CartController>(CartController(sl<CartRepository>(), const CalculateCartTotals()));
 }

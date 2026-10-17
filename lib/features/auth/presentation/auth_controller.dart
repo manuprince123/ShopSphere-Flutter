@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/foundation.dart';
 
 import '../../../core/error/failure.dart';
@@ -7,10 +9,12 @@ import '../domain/auth.dart';
 enum AuthStatus { checking, restoreFailure, signedOut, submitting, signedIn }
 
 class AuthController extends ChangeNotifier {
-  AuthController(this.repository, this.loginUseCase, this.profileRepository);
+  AuthController(this.repository, this.loginUseCase, this.profileRepository,
+      {this.onSessionCleared});
   final AuthRepository repository;
   final Login loginUseCase;
   final ProfileRepository profileRepository;
+  final Future<void> Function()? onSessionCleared;
 
   AuthStatus status = AuthStatus.checking;
   AuthUser? user;
@@ -31,6 +35,7 @@ class AuthController extends ChangeNotifier {
           final failure = (result as Failed<AuthUser>).failure;
           if (failure.kind == FailureKind.unauthorized) {
             await repository.logout();
+            await onSessionCleared?.call();
             status = AuthStatus.signedOut;
             message = failure.message;
           } else {
@@ -65,6 +70,7 @@ class AuthController extends ChangeNotifier {
 
   Future<void> signOut({String? reason}) async {
     await repository.logout();
+    await onSessionCleared?.call();
     user = null;
     message = reason;
     status = AuthStatus.signedOut;
@@ -72,6 +78,7 @@ class AuthController extends ChangeNotifier {
   }
 
   void sessionExpired() {
+    unawaited(onSessionCleared?.call() ?? Future<void>.value());
     user = null;
     message = 'Your session has expired. Please sign in again.';
     status = AuthStatus.signedOut;
