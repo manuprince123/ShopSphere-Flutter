@@ -18,8 +18,14 @@ class CartTotals {
 class CalculateCartTotals {
   const CalculateCartTotals();
   CartTotals call(List<CartItem> items) {
-    final subtotal = items.fold<double>(0, (sum, item) => sum + item.product.price * item.quantity);
-    final grandTotal = items.fold<double>(0, (sum, item) => sum + item.product.salePrice * item.quantity);
+    final subtotal = items.fold<double>(
+      0,
+      (sum, item) => sum + item.product.price * item.quantity,
+    );
+    final grandTotal = items.fold<double>(
+      0,
+      (sum, item) => sum + item.product.salePrice * item.quantity,
+    );
     return CartTotals(subtotal, subtotal - grandTotal, grandTotal);
   }
 }

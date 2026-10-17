@@ -34,7 +34,8 @@ class CartController extends ChangeNotifier {
       next.add(CartItem(product, quantity.clamp(1, product.stock).toInt()));
     } else {
       next[index] = next[index].withQuantity(
-          (next[index].quantity + quantity).clamp(1, product.stock).toInt());
+        (next[index].quantity + quantity).clamp(1, product.stock).toInt(),
+      );
     }
     items = next;
     notifyListeners();
@@ -49,7 +50,8 @@ class CartController extends ChangeNotifier {
       next.removeAt(index);
     } else {
       next[index] = next[index].withQuantity(
-          quantity.clamp(1, next[index].product.stock).toInt());
+        quantity.clamp(1, next[index].product.stock).toInt(),
+      );
     }
     items = next;
     notifyListeners();
@@ -57,7 +59,9 @@ class CartController extends ChangeNotifier {
   }
 
   Future<bool> placeOrder(int userId) async {
-    if (items.isEmpty || checkoutStatus == CheckoutStatus.processing) return false;
+    if (items.isEmpty || checkoutStatus == CheckoutStatus.processing) {
+      return false;
+    }
     checkoutStatus = CheckoutStatus.processing;
     checkoutFailure = null;
     notifyListeners();

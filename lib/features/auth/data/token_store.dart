@@ -20,6 +20,7 @@ class SecureTokenStore implements TokenStore {
     await storage.write(key: 'access_token', value: accessToken);
     await storage.write(key: 'refresh_token', value: refreshToken);
   }
+
   @override
   Future<void> clear() => storage.deleteAll();
 }

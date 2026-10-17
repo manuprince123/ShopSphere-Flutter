@@ -1,6 +1,6 @@
 import 'dart:async';
 
-import 'package:flutter/foundation.dart';
+import 'package:flutter/foundation.dart' hide Category;
 
 import '../../../core/error/failure.dart';
 import '../domain/product.dart';
@@ -51,7 +51,9 @@ class CatalogController extends ChangeNotifier {
     loadingMore = false;
     failure = null;
     notifyListeners();
-    final result = await getProducts(ProductQuery(search: search, category: category, sort: sort));
+    final result = await getProducts(
+      ProductQuery(search: search, category: category, sort: sort),
+    );
     if (_disposed || generation != _generation) return;
     if (result case Success<ProductPage>(:final value)) {
       products = value.products;
@@ -65,13 +67,23 @@ class CatalogController extends ChangeNotifier {
   }
 
   Future<void> loadMore() async {
-    if (loadingMore || failure != null || status != CatalogStatus.ready || !hasMore) return;
+    if (loadingMore ||
+        failure != null ||
+        status != CatalogStatus.ready ||
+        !hasMore) {
+      return;
+    }
     loadingMore = true;
     notifyListeners();
     final generation = _generation;
-    final result = await getProducts(ProductQuery(
-      search: search, category: category, sort: sort, skip: products.length,
-    ));
+    final result = await getProducts(
+      ProductQuery(
+        search: search,
+        category: category,
+        sort: sort,
+        skip: products.length,
+      ),
+    );
     if (_disposed || generation != _generation) return;
     if (result case Success<ProductPage>(:final value)) {
       products = [...products, ...value.products];

@@ -9,8 +9,12 @@ import '../domain/auth.dart';
 enum AuthStatus { checking, restoreFailure, signedOut, submitting, signedIn }
 
 class AuthController extends ChangeNotifier {
-  AuthController(this.repository, this.loginUseCase, this.profileRepository,
-      {this.onSessionCleared});
+  AuthController(
+    this.repository,
+    this.loginUseCase,
+    this.profileRepository, {
+    this.onSessionCleared,
+  });
   final AuthRepository repository;
   final Login loginUseCase;
   final ProfileRepository profileRepository;

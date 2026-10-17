@@ -4,9 +4,18 @@ import 'package:shopsphere/features/cart/domain/cart.dart';
 import 'package:shopsphere/features/cart/presentation/cart_controller.dart';
 import 'package:shopsphere/features/products/domain/product.dart';
 
-const bag = Product(id: 42, title: 'Bag', description: '', price: 80,
-  discountPercentage: 25, rating: 4.5, stock: 5,
-  thumbnail: '', images: [], reviews: []);
+const bag = Product(
+  id: 42,
+  title: 'Bag',
+  description: '',
+  price: 80,
+  discountPercentage: 25,
+  rating: 4.5,
+  stock: 5,
+  thumbnail: '',
+  images: [],
+  reviews: [],
+);
 
 class FakeCartRepository implements CartRepository {
   List<CartItem> stored = [];
@@ -16,7 +25,8 @@ class FakeCartRepository implements CartRepository {
   @override
   Future<void> save(List<CartItem> items) async => stored = [...items];
   @override
-  Future<Result<int>> placeOrder(int userId, List<CartItem> items) async => orderResult;
+  Future<Result<int>> placeOrder(int userId, List<CartItem> items) async =>
+      orderResult;
 }
 
 void main() {
@@ -42,7 +52,10 @@ void main() {
     expect(repo.stored, isEmpty);
   });
   test('quantity cannot exceed stock', () async {
-    final cart = CartController(FakeCartRepository(), const CalculateCartTotals());
+    final cart = CartController(
+      FakeCartRepository(),
+      const CalculateCartTotals(),
+    );
     await cart.add(bag, 20);
     expect(cart.count, 5);
   });
@@ -56,8 +69,8 @@ void main() {
     expect(repo.stored, isEmpty);
   });
   test('failed checkout retains cart for retry', () async {
-    final repo = FakeCartRepository()..orderResult = const Failed(
-      Failure(FailureKind.server, 'Retry'));
+    final repo = FakeCartRepository()
+      ..orderResult = const Failed(Failure(FailureKind.server, 'Retry'));
     final cart = CartController(repo, const CalculateCartTotals());
     await cart.add(bag, 1);
     expect(await cart.placeOrder(1), isFalse);

@@ -12,17 +12,21 @@ class ProfileRepositoryImpl implements ProfileRepository {
   @override
   Future<Result<AuthUser>> me() async {
     try {
-      final response = await dio.get<Map<String, dynamic>>('/auth/me',
-          options: Options(extra: {'protected': true}));
+      final response = await dio.get<Map<String, dynamic>>(
+        '/auth/me',
+        options: Options(extra: {'protected': true}),
+      );
       final data = response.data!;
-      return Success(AuthUser(
-        id: data['id'] as int,
-        firstName: data['firstName'] as String? ?? '',
-        lastName: data['lastName'] as String? ?? '',
-        email: data['email'] as String? ?? '',
-        phone: data['phone'] as String? ?? '',
-        image: data['image'] as String? ?? '',
-      ));
+      return Success(
+        AuthUser(
+          id: data['id'] as int,
+          firstName: data['firstName'] as String? ?? '',
+          lastName: data['lastName'] as String? ?? '',
+          email: data['email'] as String? ?? '',
+          phone: data['phone'] as String? ?? '',
+          image: data['image'] as String? ?? '',
+        ),
+      );
     } catch (error) {
       return Failed(mapFailure(error));
     }

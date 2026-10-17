@@ -6,10 +6,30 @@ import 'package:shopsphere/features/products/domain/product.dart';
 import 'package:shopsphere/features/products/domain/product_repository.dart';
 import 'package:shopsphere/features/products/presentation/catalog_controller.dart';
 
-const sample = Product(id: 1, title: 'Lamp', description: '', price: 10,
-  discountPercentage: 0, rating: 4, stock: 1, thumbnail: '', images: [], reviews: []);
-const second = Product(id: 2, title: 'Chair', description: '', price: 20,
-  discountPercentage: 0, rating: 4, stock: 1, thumbnail: '', images: [], reviews: []);
+const sample = Product(
+  id: 1,
+  title: 'Lamp',
+  description: '',
+  price: 10,
+  discountPercentage: 0,
+  rating: 4,
+  stock: 1,
+  thumbnail: '',
+  images: [],
+  reviews: [],
+);
+const second = Product(
+  id: 2,
+  title: 'Chair',
+  description: '',
+  price: 20,
+  discountPercentage: 0,
+  rating: 4,
+  stock: 1,
+  thumbnail: '',
+  images: [],
+  reviews: [],
+);
 
 class FakeProducts implements ProductRepository {
   final queue = <Completer<Result<ProductPage>>>[];
@@ -19,6 +39,7 @@ class FakeProducts implements ProductRepository {
     queue.add(completer);
     return completer.future;
   }
+
   @override
   Future<Result<List<Category>>> getCategories() async => const Success([]);
   @override
@@ -51,8 +72,9 @@ void main() {
     final repo = FakeProducts();
     final controller = CatalogController(repo, GetProducts(repo));
     final pending = controller.load();
-    repo.queue.single.complete(const Failed(
-      Failure(FailureKind.server, 'Retry later')));
+    repo.queue.single.complete(
+      const Failed(Failure(FailureKind.server, 'Retry later')),
+    );
     await pending;
     expect(controller.status, CatalogStatus.failure);
     expect(controller.failure?.kind, FailureKind.server);

@@ -7,18 +7,25 @@ import 'package:shopsphere/core/error/failure_mapper.dart';
 
 void main() {
   final request = RequestOptions(path: '/test');
-  DioException status(int code) => DioException(requestOptions: request,
-    response: Response(requestOptions: request, statusCode: code));
+  DioException status(int code) => DioException(
+    requestOptions: request,
+    response: Response(requestOptions: request, statusCode: code),
+  );
 
   test('maps a 400 login response to friendly validation feedback', () {
     final loginRequest = RequestOptions(path: '/auth/login');
-    final error = DioException(requestOptions: loginRequest,
-      response: Response(requestOptions: loginRequest, statusCode: 400));
+    final error = DioException(
+      requestOptions: loginRequest,
+      response: Response(requestOptions: loginRequest, statusCode: 400),
+    );
     expect(mapFailure(error).kind, FailureKind.validation);
     expect(mapFailure(error).message, 'Invalid username or password.');
   });
   test('other 400 responses do not claim credentials are wrong', () {
-    expect(mapFailure(status(400)).message, 'Please check your details and try again.');
+    expect(
+      mapFailure(status(400)).message,
+      'Please check your details and try again.',
+    );
   });
   test('maps 401 to session expiry', () {
     expect(mapFailure(status(401)).kind, FailureKind.unauthorized);
@@ -30,14 +37,31 @@ void main() {
     expect(mapFailure(status(500)).kind, FailureKind.server);
   });
   test('maps a connection timeout distinctly', () {
-    expect(mapFailure(DioException(requestOptions: request,
-      type: DioExceptionType.connectionTimeout)).kind, FailureKind.timeout);
+    expect(
+      mapFailure(
+        DioException(
+          requestOptions: request,
+          type: DioExceptionType.connectionTimeout,
+        ),
+      ).kind,
+      FailureKind.timeout,
+    );
   });
   test('maps a socket exception to offline feedback', () {
-    expect(mapFailure(DioException(requestOptions: request,
-      error: const SocketException('offline'))).kind, FailureKind.network);
+    expect(
+      mapFailure(
+        DioException(
+          requestOptions: request,
+          error: const SocketException('offline'),
+        ),
+      ).kind,
+      FailureKind.network,
+    );
   });
   test('maps invalid payloads to a parsing error', () {
-    expect(mapFailure(const FormatException('invalid')).kind, FailureKind.unknown);
+    expect(
+      mapFailure(const FormatException('invalid')).kind,
+      FailureKind.unknown,
+    );
   });
 }

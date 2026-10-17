@@ -1,5 +1,10 @@
 class Review {
-  const Review({required this.rating, required this.comment, required this.reviewerName, required this.date});
+  const Review({
+    required this.rating,
+    required this.comment,
+    required this.reviewerName,
+    required this.date,
+  });
   final int rating;
   final String comment;
   final String reviewerName;
@@ -7,10 +12,19 @@ class Review {
 }
 
 class Product {
-  const Product({required this.id, required this.title, required this.description,
-    required this.price, required this.discountPercentage, required this.rating,
-    required this.stock, required this.thumbnail, required this.images,
-    required this.reviews, this.brand});
+  const Product({
+    required this.id,
+    required this.title,
+    required this.description,
+    required this.price,
+    required this.discountPercentage,
+    required this.rating,
+    required this.stock,
+    required this.thumbnail,
+    required this.images,
+    required this.reviews,
+    this.brand,
+  });
   final int id;
   final String title;
   final String description;
@@ -41,8 +55,13 @@ class ProductPage {
 enum ProductSort { featured, priceLow, priceHigh, rating, title }
 
 class ProductQuery {
-  const ProductQuery({this.search = '', this.category, this.sort = ProductSort.featured,
-    this.skip = 0, this.limit = 20});
+  const ProductQuery({
+    this.search = '',
+    this.category,
+    this.sort = ProductSort.featured,
+    this.skip = 0,
+    this.limit = 20,
+  });
   final String search;
   final String? category;
   final ProductSort sort;

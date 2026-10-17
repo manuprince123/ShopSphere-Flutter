@@ -10,7 +10,8 @@ abstract interface class ProductRepository {
 class GetProducts {
   const GetProducts(this.repository);
   final ProductRepository repository;
-  Future<Result<ProductPage>> call(ProductQuery query) => repository.getProducts(query);
+  Future<Result<ProductPage>> call(ProductQuery query) =>
+      repository.getProducts(query);
 }
 
 class GetProduct {

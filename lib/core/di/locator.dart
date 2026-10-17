@@ -22,19 +22,48 @@ final sl = GetIt.instance;
 
 Future<void> configureDependencies() async {
   final preferences = await SharedPreferences.getInstance();
-  sl.registerSingleton<TokenStore>(SecureTokenStore(const FlutterSecureStorage()));
-  sl.registerSingleton<ApiClient>(ApiClient(sl<TokenStore>(),
-      onSessionExpired: () => sl<AuthController>().sessionExpired()));
-  sl.registerSingleton<AuthRepository>(AuthRepositoryImpl(sl<ApiClient>().dio, sl<TokenStore>()));
-  sl.registerSingleton<ProfileRepository>(ProfileRepositoryImpl(sl<ApiClient>().dio));
-  sl.registerSingleton<ProductRepository>(ProductRepositoryImpl(sl<ApiClient>().dio));
-  sl.registerSingleton<CartRepository>(CartRepositoryImpl(preferences, sl<ApiClient>().dio));
-  sl.registerSingleton<CartController>(CartController(sl<CartRepository>(), const CalculateCartTotals()));
-  sl.registerSingleton<AuthController>(AuthController(sl<AuthRepository>(),
-      Login(sl<AuthRepository>()), sl<ProfileRepository>(),
-      onSessionCleared: () => sl<CartController>().clear()));
-  sl.registerFactory<CatalogController>(() => CatalogController(
-      sl<ProductRepository>(), GetProducts(sl<ProductRepository>())));
-  sl.registerFactory<ProductController>(() => ProductController(GetProduct(sl<ProductRepository>())));
-  sl.registerFactory<ProfileController>(() => ProfileController(sl<ProfileRepository>()));
+  sl.registerSingleton<TokenStore>(
+    SecureTokenStore(const FlutterSecureStorage()),
+  );
+  sl.registerSingleton<ApiClient>(
+    ApiClient(
+      sl<TokenStore>(),
+      onSessionExpired: () => sl<AuthController>().sessionExpired(),
+    ),
+  );
+  sl.registerSingleton<AuthRepository>(
+    AuthRepositoryImpl(sl<ApiClient>().dio, sl<TokenStore>()),
+  );
+  sl.registerSingleton<ProfileRepository>(
+    ProfileRepositoryImpl(sl<ApiClient>().dio),
+  );
+  sl.registerSingleton<ProductRepository>(
+    ProductRepositoryImpl(sl<ApiClient>().dio),
+  );
+  sl.registerSingleton<CartRepository>(
+    CartRepositoryImpl(preferences, sl<ApiClient>().dio),
+  );
+  sl.registerSingleton<CartController>(
+    CartController(sl<CartRepository>(), const CalculateCartTotals()),
+  );
+  sl.registerSingleton<AuthController>(
+    AuthController(
+      sl<AuthRepository>(),
+      Login(sl<AuthRepository>()),
+      sl<ProfileRepository>(),
+      onSessionCleared: () => sl<CartController>().clear(),
+    ),
+  );
+  sl.registerFactory<CatalogController>(
+    () => CatalogController(
+      sl<ProductRepository>(),
+      GetProducts(sl<ProductRepository>()),
+    ),
+  );
+  sl.registerFactory<ProductController>(
+    () => ProductController(GetProduct(sl<ProductRepository>())),
+  );
+  sl.registerFactory<ProfileController>(
+    () => ProfileController(sl<ProfileRepository>()),
+  );
 }

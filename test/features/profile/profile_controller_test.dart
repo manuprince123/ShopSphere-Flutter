@@ -9,8 +9,14 @@ import 'package:shopsphere/features/profile/presentation/profile_controller.dart
 
 class MockProfileRepository extends Mock implements ProfileRepository {}
 
-const user = AuthUser(id: 1, firstName: 'Emily', lastName: 'Johnson',
-  email: 'emily@example.test', phone: '123', image: '');
+const user = AuthUser(
+  id: 1,
+  firstName: 'Emily',
+  lastName: 'Johnson',
+  email: 'emily@example.test',
+  phone: '123',
+  image: '',
+);
 
 void main() {
   test('profile transitions from loading to ready', () async {
@@ -29,8 +35,9 @@ void main() {
 
   test('profile surfaces a retryable failure', () async {
     final repository = MockProfileRepository();
-    when(() => repository.me()).thenAnswer((_) async => const Failed(
-      Failure(FailureKind.server, 'Try again')));
+    when(() => repository.me()).thenAnswer(
+      (_) async => const Failed(Failure(FailureKind.server, 'Try again')),
+    );
     final controller = ProfileController(repository);
     await controller.load();
     expect(controller.status, ProfileStatus.failure);
