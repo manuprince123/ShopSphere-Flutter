@@ -25,6 +25,7 @@ class CatalogController extends ChangeNotifier {
   int total = 0;
   Timer? _debounce;
   int _generation = 0;
+  bool _disposed = false;
 
   bool get hasMore => products.length < total;
 
@@ -34,6 +35,7 @@ class CatalogController extends ChangeNotifier {
 
   Future<void> loadCategories() async {
     final result = await repository.getCategories();
+    if (_disposed) return;
     if (result case Success<List<Category>>(:final value)) {
       categories = value;
       categoriesFailure = null;
@@ -50,7 +52,7 @@ class CatalogController extends ChangeNotifier {
     failure = null;
     notifyListeners();
     final result = await getProducts(ProductQuery(search: search, category: category, sort: sort));
-    if (generation != _generation) return;
+    if (_disposed || generation != _generation) return;
     if (result case Success<ProductPage>(:final value)) {
       products = value.products;
       total = value.total;
@@ -70,7 +72,7 @@ class CatalogController extends ChangeNotifier {
     final result = await getProducts(ProductQuery(
       search: search, category: category, sort: sort, skip: products.length,
     ));
-    if (generation != _generation) return;
+    if (_disposed || generation != _generation) return;
     if (result case Success<ProductPage>(:final value)) {
       products = [...products, ...value.products];
       total = value.total;
@@ -112,6 +114,7 @@ class CatalogController extends ChangeNotifier {
 
   @override
   void dispose() {
+    _disposed = true;
     _debounce?.cancel();
     super.dispose();
   }

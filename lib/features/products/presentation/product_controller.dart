@@ -12,12 +12,14 @@ class ProductController extends ChangeNotifier {
   ProductStatus status = ProductStatus.loading;
   Product? product;
   Failure? failure;
+  bool _disposed = false;
 
   Future<void> load(int id) async {
     status = ProductStatus.loading;
     failure = null;
     notifyListeners();
     final result = await getProduct(id);
+    if (_disposed) return;
     if (result case Success<Product>(:final value)) {
       product = value;
       status = ProductStatus.ready;
@@ -26,5 +28,11 @@ class ProductController extends ChangeNotifier {
       status = ProductStatus.failure;
     }
     notifyListeners();
+  }
+
+  @override
+  void dispose() {
+    _disposed = true;
+    super.dispose();
   }
 }
