@@ -19,6 +19,12 @@ class _CatalogPageState extends State<CatalogPage> {
   final searchController = TextEditingController();
 
   @override
+  void initState() {
+    super.initState();
+    searchController.text = context.read<CatalogController>().search;
+  }
+
+  @override
   void dispose() { searchController.dispose(); super.dispose(); }
 
   @override
@@ -107,9 +113,9 @@ class _CatalogPageState extends State<CatalogPage> {
       return false;
     },
     child: RefreshIndicator(onRefresh: catalog.load,
-      child: LayoutBuilder(builder: (context, constraints) {
-        final width = constraints.maxWidth;
-        final columns = width < 600 ? 2 : width < 850 ? 3 : 4;
+      child: LayoutBuilder(builder: (context, _) {
+        final screenWidth = MediaQuery.sizeOf(context).width;
+        final columns = screenWidth < 600 ? 2 : screenWidth < 850 ? 3 : 4;
         if (widget.listMode) {
           return ListView.builder(physics: const AlwaysScrollableScrollPhysics(),
             padding: const EdgeInsets.fromLTRB(16, 0, 16, 24),

@@ -62,8 +62,9 @@ class _LoadingCardsState extends State<LoadingCards> with SingleTickerProviderSt
   @override
   Widget build(BuildContext context) => AnimatedBuilder(animation: controller,
     builder: (context, child) => Opacity(opacity: .5 + controller.value * .35, child: child),
-    child: LayoutBuilder(builder: (context, constraints) {
-      final columns = constraints.maxWidth < 600 ? 2 : constraints.maxWidth < 1024 ? 4 : 5;
+    child: LayoutBuilder(builder: (context, _) {
+      final screenWidth = MediaQuery.sizeOf(context).width;
+      final columns = screenWidth < 600 ? 2 : screenWidth < 850 ? 3 : 4;
       return GridView.builder(
         padding: const EdgeInsets.all(16), itemCount: columns * 2,
         gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
