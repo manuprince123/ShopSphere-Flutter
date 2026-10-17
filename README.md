@@ -1,0 +1,85 @@
+# ShopSphere
+
+ShopSphere is a Material 3 shopping app for the Prosessed Flutter Developer Intern assignment. It uses the public DummyJSON API for sign-in, product discovery, profile and simulated checkout. The cart is stored on the device. The app is designed for phones and tablets, with a navigation rail and a side-by-side product view on wide layouts.
+
+> **Submission status:** Source implementation is in progress. APK, demo video, screenshots and public links will be added after verification. The assignment brief is intentionally excluded from this repository because it is marked confidential.
+
+## Screenshots
+
+Pending device verification: four phone and two tablet/landscape screenshots will be added to `screenshots/` before submission.
+
+## Features
+
+| Scope | Status |
+| --- | --- |
+| Splash session check; login validation, secure tokens, invalid-credentials feedback | Implemented in source; verification pending |
+| Paginated product catalogue, pull-to-refresh, API categories, search debounce and sorting | Implemented in source; verification pending |
+| Product carousel, reviews, stock, quantity selector and missing-product handling | Implemented in source; verification pending |
+| Persistent cart, totals, badge, simulated checkout and confirmation | Implemented in source; verification pending |
+| Profile via `/auth/me`, logout and expiry handling | Implemented in source; verification pending |
+| Phone grid/bottom navigation, tablet rail and wide master-detail layout | Implemented in source; verification pending |
+| Automatic token refresh, dark theme, wishlist, offline catalogue cache, localization | Not implemented (optional bonus scope) |
+
+## Tech stack
+
+- **Flutter 3.47.7 / Dart 3.13.5:** target stable SDK; confirm with `flutter --version` after installation.
+- **Provider:** one state-management mechanism for explicit `ChangeNotifier` states and scoped UI rebuilds.
+- **get_it:** composition-root dependency injection so widgets do not construct repositories.
+- **Dio:** one configured API client with timeouts, bearer-token interceptor and debug-only request logging.
+- **flutter_secure_storage:** access and refresh tokens in platform secure storage.
+- **shared_preferences:** small JSON cart snapshot that survives restart.
+- **cached_network_image:** cached product images with loading and error placeholders.
+- **flutter_lints, flutter_test, mocktail:** static checks and isolated tests.
+
+## Architecture
+
+```text
+Widget → Provider controller → use case → repository interface
+                                        ↓
+                               repository implementation
+                                        ↓
+                               Dio / secure or local storage
+```
+
+Each feature lives under `lib/features/<feature>/` with `presentation`, `domain` and `data` directories. The domain layer contains plain Dart entities and contracts. `lib/core/` holds error mapping, network setup, dependency wiring, theme and shared UI. `main.dart` is the composition entry point.
+
+For a catalogue request, `CatalogPage` observes `CatalogController`. The controller calls `GetProducts`, which delegates to `ProductRepository`. The implementation builds the correct DummyJSON endpoint and parses `ProductModel`. A `Success` or typed `Failure` updates the controller, and the page renders products, empty feedback or a retry view.
+
+## State management
+
+Provider and `ChangeNotifier` keep the assignment's small set of flows straightforward. Controllers expose explicit loading, ready, empty and failure states; widgets only render them and forward user actions. The trade-off is manual notification and lifecycle management, which is manageable here but would warrant more structured immutable state in a larger app.
+
+## Error handling
+
+The shared `mapFailure` function converts Dio timeouts, socket errors, HTTP 400/401/403/404/5xx and parse failures into user-facing typed failures. Protected requests attach the bearer token. HTTP 401 clears the token and returns to login. Network screens expose retry controls; catalogue pagination has its own retry footer. Automatic refresh is left as bonus work.
+
+## Getting started
+
+1. Install the current stable Flutter SDK and Android SDK (Android API 26+ support).
+2. Run `flutter pub get`.
+3. Run `flutter run` and sign in with the test account below.
+4. Run `dart format lib test`, `flutter analyze` and `flutter test`.
+5. Build with `flutter build apk --release`.
+
+No code generation is used. The Android and iOS platform projects are generated with `flutter create .` for a fresh checkout if they are not already included.
+
+## Testing
+
+Run `flutter test --coverage`. Tests cover JSON fixtures, repository success and failure paths, validation, failure mapping, controller state transitions, cart totals and checkout. Exact passing count and coverage percentage will be filled in after the local SDK is ready and the tests pass.
+
+## Test credentials
+
+Username: `emilys`  
+Password: `emilyspass`
+
+## Assumptions and trade-offs
+
+DummyJSON checkout only simulates an order; the server does not persist it. The app clears its local cart only after a successful response. Search and category selection are mutually exclusive because DummyJSON exposes separate search and category endpoints. Prices are displayed in the API's dollar denomination. With more time I would add token refresh, a product cache, accessibility audit on real devices, and a dark theme.
+
+## AI assistance
+
+Codex assisted with implementation planning, code generation and test scaffolding. The author must review and understand the code and verify it on a real device or emulator before submission.
+
+## Author
+
+Manu R. Contact email and portfolio link to be confirmed before publication.
