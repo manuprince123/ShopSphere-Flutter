@@ -2,7 +2,7 @@
 
 ShopSphere is a Material 3 shopping app for the Prosessed Flutter Developer Intern assignment. It uses the public DummyJSON API for sign-in, product discovery, profile and simulated checkout. The cart is stored on the device. The app is designed for phones and tablets, with a navigation rail and a side-by-side product view on wide layouts.
 
-> **Submission status:** Source implementation is in progress. APK, demo video, screenshots and public links will be added after verification. The assignment brief is intentionally excluded from this repository because it is marked confidential.
+> **Submission status:** Static analysis and automated tests pass. APK, demo video, screenshots and public links still need device verification and publication. The assignment brief is intentionally excluded from this repository because it is marked confidential.
 
 ## Screenshots
 
@@ -12,17 +12,18 @@ Pending device verification: four phone and two tablet/landscape screenshots wil
 
 | Scope | Status |
 | --- | --- |
-| Splash session check; login validation, secure tokens, invalid-credentials feedback | Implemented in source; verification pending |
-| Paginated product catalogue, pull-to-refresh, API categories, search debounce and sorting | Implemented in source; verification pending |
-| Product carousel, reviews, stock, quantity selector and missing-product handling | Implemented in source; verification pending |
-| Persistent cart, totals, badge, simulated checkout and confirmation | Implemented in source; verification pending |
-| Profile via `/auth/me`, logout and expiry handling | Implemented in source; verification pending |
-| Phone grid/bottom navigation, tablet rail and wide master-detail layout | Implemented in source; verification pending |
+| Splash session check; login validation, secure tokens, invalid-credentials feedback | Implemented; device verification pending |
+| Paginated product catalogue, pull-to-refresh, API categories, search debounce and sorting | Implemented; device verification pending |
+| Product carousel, reviews, stock, quantity selector and missing-product handling | Implemented; device verification pending |
+| Persistent cart, totals, badge, simulated checkout and confirmation | Implemented; device verification pending |
+| Profile via `/auth/me`, logout and expiry handling | Implemented; device verification pending |
+| Phone grid/bottom navigation, tablet rail and wide master-detail layout | Implemented; device verification pending |
+| GitHub Actions for format, analysis and tests | Configured; remote run pending |
 | Automatic token refresh, dark theme, wishlist, offline catalogue cache, localization | Not implemented (optional bonus scope) |
 
 ## Tech stack
 
-- **Flutter 3.47.7 / Dart 3.13.5:** target stable SDK; confirm with `flutter --version` after installation.
+- **Flutter 3.47.7 / Dart 3.13.5:** stable SDK used for local analysis and tests.
 - **Provider:** one state-management mechanism for explicit `ChangeNotifier` states and scoped UI rebuilds.
 - **get_it:** composition-root dependency injection so widgets do not construct repositories.
 - **Dio:** one configured API client with timeouts, bearer-token interceptor and debug-only request logging.
@@ -65,7 +66,7 @@ No code generation is used. The Android and iOS platform projects are generated 
 
 ## Testing
 
-Run `flutter test --coverage`. Tests cover JSON fixtures, repository success and failure paths, validation, failure mapping, controller state transitions, cart totals and checkout. Exact passing count and coverage percentage will be filled in after the local SDK is ready and the tests pass.
+Run `flutter test --coverage`. **53 tests pass**, covering JSON fixtures, repository success and failure paths, validation, failure mapping, controller state transitions, cart totals, checkout, and two large-text layout cases. The current line coverage is **60.2%** (385 of 640 measured lines). `flutter analyze` reports zero issues.
 
 ## Test credentials
 
@@ -74,7 +75,7 @@ Password: `emilyspass`
 
 ## Assumptions and trade-offs
 
-DummyJSON checkout only simulates an order; the server does not persist it. The app clears its local cart only after a successful response. Search and category selection are mutually exclusive because DummyJSON exposes separate search and category endpoints. Prices are displayed in the API's dollar denomination. With more time I would add token refresh, a product cache, accessibility audit on real devices, and a dark theme.
+DummyJSON checkout only simulates an order; the server does not persist it. The app clears its local cart only after a successful response, and clears it on logout to avoid showing one account's items to another. Search and category selection are mutually exclusive because DummyJSON exposes separate search and category endpoints. Prices are displayed in the API's dollar denomination. The generated Android release configuration currently uses a local debug signing key for this demo; production distribution would require a separately managed release key. With more time I would add token refresh, a product cache, accessibility audit on real devices, and a dark theme.
 
 ## AI assistance
 
