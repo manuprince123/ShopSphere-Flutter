@@ -66,7 +66,7 @@ No code generation is used. The Android and iOS platform projects are generated 
 
 ## Testing
 
-Run `flutter test --coverage`. **55 tests pass**, covering JSON fixtures, repository success and failure paths, validation, failure mapping, controller state transitions, cart totals, checkout, two large-text layout cases, and sign-in-to-order navigation. The current line coverage is **76.0%** (872 of 1,147 measured lines). `flutter analyze` reports zero issues.
+Run `flutter test --coverage`. **55 tests pass**, covering JSON fixtures, repository success and failure paths, validation, failure mapping, controller state transitions, cart totals, checkout, and large-text layout. The sign-in-to-order widget flow is also tested at 1.3× text scale. The current line coverage is **76.3%** (875 of 1,147 measured lines). `flutter analyze` reports zero issues.
 
 ## Test credentials
 
