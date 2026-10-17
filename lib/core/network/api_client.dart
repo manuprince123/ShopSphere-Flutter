@@ -17,11 +17,9 @@ class ApiClient {
           final token = await tokenStore.readAccessToken();
           if (token != null) options.headers['Authorization'] = 'Bearer $token';
         }
-        if (kDebugMode) debugPrint('HTTP ${options.method} ${options.uri}');
         handler.next(options);
       },
       onError: (error, handler) async {
-        if (kDebugMode) debugPrint('HTTP ${error.response?.statusCode} ${error.requestOptions.uri}');
         if (error.response?.statusCode == 401 &&
             error.requestOptions.extra['protected'] == true) {
           await tokenStore.clear();
@@ -30,6 +28,22 @@ class ApiClient {
         handler.next(error);
       },
     ));
+    if (kDebugMode) {
+      dio.interceptors.add(InterceptorsWrapper(
+        onRequest: (options, handler) {
+          debugPrint('HTTP ${options.method} ${options.uri}');
+          handler.next(options);
+        },
+        onResponse: (response, handler) {
+          debugPrint('HTTP ${response.statusCode} ${response.requestOptions.uri}');
+          handler.next(response);
+        },
+        onError: (error, handler) {
+          debugPrint('HTTP ${error.response?.statusCode} ${error.requestOptions.uri}');
+          handler.next(error);
+        },
+      ));
+    }
   }
 
   final TokenStore tokenStore;
