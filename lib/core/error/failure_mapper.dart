@@ -23,7 +23,10 @@ Failure mapFailure(Object error) {
       return const Failure(FailureKind.notFound, 'Product not found.');
     }
     if (status == 400) {
-      return const Failure(FailureKind.validation, 'Invalid username or password.');
+      return Failure(FailureKind.validation,
+          error.requestOptions.path == '/auth/login'
+              ? 'Invalid username or password.'
+              : 'Please check your details and try again.');
     }
     if (status != null && status >= 500) {
       return const Failure(FailureKind.server, 'The store is having trouble right now. Please retry.');

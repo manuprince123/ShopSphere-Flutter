@@ -11,8 +11,14 @@ void main() {
     response: Response(requestOptions: request, statusCode: code));
 
   test('maps a 400 login response to friendly validation feedback', () {
-    expect(mapFailure(status(400)).kind, FailureKind.validation);
-    expect(mapFailure(status(400)).message, 'Invalid username or password.');
+    final loginRequest = RequestOptions(path: '/auth/login');
+    final error = DioException(requestOptions: loginRequest,
+      response: Response(requestOptions: loginRequest, statusCode: 400));
+    expect(mapFailure(error).kind, FailureKind.validation);
+    expect(mapFailure(error).message, 'Invalid username or password.');
+  });
+  test('other 400 responses do not claim credentials are wrong', () {
+    expect(mapFailure(status(400)).message, 'Please check your details and try again.');
   });
   test('maps 401 to session expiry', () {
     expect(mapFailure(status(401)).kind, FailureKind.unauthorized);
