@@ -1,0 +1,12 @@
+{
+  "id": 42,
+  "title": "Everyday Backpack",
+  "description": "A lightweight day bag.",
+  "price": 80,
+  "discountPercentage": 25,
+  "rating": 4.5,
+  "stock": 9,
+  "thumbnail": "https://example.test/bag.png",
+  "images": ["https://example.test/bag-front.png", "https://example.test/bag-back.png"],
+  "reviews": [{"rating": 5, "comment": "Excellent", "reviewerName": "Ava", "date": "2026-10-16T10:00:00.000Z"}]
+}

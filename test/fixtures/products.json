@@ -1,0 +1,8 @@
+{
+  "products": [
+    {"id": 42, "title": "Everyday Backpack", "price": 80, "discountPercentage": 25, "rating": 4.5, "stock": 9, "thumbnail": "https://example.test/bag.png"}
+  ],
+  "total": 1,
+  "skip": 0,
+  "limit": 20
+}
