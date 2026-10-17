@@ -8,6 +8,8 @@ import 'package:shopsphere/features/products/presentation/catalog_controller.dar
 
 const sample = Product(id: 1, title: 'Lamp', description: '', price: 10,
   discountPercentage: 0, rating: 4, stock: 1, thumbnail: '', images: [], reviews: []);
+const second = Product(id: 2, title: 'Chair', description: '', price: 20,
+  discountPercentage: 0, rating: 4, stock: 1, thumbnail: '', images: [], reviews: []);
 
 class FakeProducts implements ProductRepository {
   final queue = <Completer<Result<ProductPage>>>[];
@@ -54,5 +56,21 @@ void main() {
     await pending;
     expect(controller.status, CatalogStatus.failure);
     expect(controller.failure?.kind, FailureKind.server);
+  });
+
+  test('infinite scroll stops when the reported total is loaded', () async {
+    final repo = FakeProducts();
+    final controller = CatalogController(repo, GetProducts(repo));
+    final first = controller.load();
+    repo.queue.first.complete(const Success(ProductPage([sample], 2)));
+    await first;
+    expect(controller.hasMore, isTrue);
+    final next = controller.loadMore();
+    repo.queue.last.complete(const Success(ProductPage([second], 2)));
+    await next;
+    expect(controller.products, hasLength(2));
+    expect(controller.hasMore, isFalse);
+    await controller.loadMore();
+    expect(repo.queue, hasLength(2));
   });
 }
