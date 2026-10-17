@@ -38,7 +38,7 @@ class _CatalogPageState extends State<CatalogPage> {
         ])),
       Padding(padding: const EdgeInsets.symmetric(horizontal: 20),
         child: TextField(controller: searchController,
-          onChanged: catalog.setSearch,
+          onChanged: (value) { setState(() {}); catalog.setSearch(value); },
           decoration: InputDecoration(hintText: 'Search products',
             prefixIcon: const Icon(Icons.search_rounded),
             suffixIcon: searchController.text.isEmpty ? null : IconButton(
@@ -52,6 +52,10 @@ class _CatalogPageState extends State<CatalogPage> {
           _chip(context, catalog, null, 'All'),
           for (final category in catalog.categories)
             _chip(context, catalog, category.slug, category.name),
+          if (catalog.categoriesFailure != null)
+            ActionChip(label: const Text('Retry categories'),
+              avatar: const Icon(Icons.refresh, size: 18),
+              onPressed: catalog.loadCategories),
         ])),
       Padding(padding: const EdgeInsets.fromLTRB(20, 12, 20, 10),
         child: Row(children: [
@@ -107,25 +111,32 @@ class _CatalogPageState extends State<CatalogPage> {
         final width = constraints.maxWidth;
         final columns = width < 600 ? 2 : width < 850 ? 3 : 4;
         if (widget.listMode) {
-          return ListView.builder(padding: const EdgeInsets.fromLTRB(16, 0, 16, 24),
-            itemCount: catalog.products.length + (catalog.loadingMore ? 1 : 0),
+          return ListView.builder(physics: const AlwaysScrollableScrollPhysics(),
+            padding: const EdgeInsets.fromLTRB(16, 0, 16, 24),
+            itemCount: catalog.products.length + (catalog.loadingMore || catalog.failure != null ? 1 : 0),
             itemBuilder: (context, index) => index >= catalog.products.length
-                ? const Padding(padding: EdgeInsets.all(20), child: Center(child: CircularProgressIndicator()))
+                ? _footer(catalog)
                 : ProductRow(product: catalog.products[index], onTap: () => widget.onProductTap(catalog.products[index].id)));
         }
-        return GridView.builder(padding: const EdgeInsets.fromLTRB(16, 0, 16, 24),
-          itemCount: catalog.products.length + (catalog.loadingMore ? 1 : 0),
+        return GridView.builder(physics: const AlwaysScrollableScrollPhysics(),
+          padding: const EdgeInsets.fromLTRB(16, 0, 16, 24),
+          itemCount: catalog.products.length + (catalog.loadingMore || catalog.failure != null ? 1 : 0),
           gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
             crossAxisCount: columns, crossAxisSpacing: 12, mainAxisSpacing: 12,
             mainAxisExtent: 304),
           itemBuilder: (context, index) => index >= catalog.products.length
-              ? const Center(child: CircularProgressIndicator())
+              ? _footer(catalog)
               : ProductCard(product: catalog.products[index],
                   onTap: () => widget.onProductTap(catalog.products[index].id)),
         );
       }),
     ),
   );
+
+  Widget _footer(CatalogController catalog) => catalog.failure == null
+      ? const Center(child: CircularProgressIndicator())
+      : Center(child: TextButton.icon(onPressed: catalog.retryLoadMore,
+          icon: const Icon(Icons.refresh), label: const Text('Retry loading more')));
 }
 
 class ProductCard extends StatelessWidget {

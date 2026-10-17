@@ -16,6 +16,7 @@ class CatalogController extends ChangeNotifier {
   CatalogStatus status = CatalogStatus.loading;
   List<Product> products = [];
   List<Category> categories = [];
+  Failure? categoriesFailure;
   Failure? failure;
   String search = '';
   String? category;
@@ -35,13 +36,17 @@ class CatalogController extends ChangeNotifier {
     final result = await repository.getCategories();
     if (result case Success<List<Category>>(:final value)) {
       categories = value;
-      notifyListeners();
+      categoriesFailure = null;
+    } else {
+      categoriesFailure = (result as Failed<List<Category>>).failure;
     }
+    notifyListeners();
   }
 
   Future<void> load() async {
     final generation = ++_generation;
     status = CatalogStatus.loading;
+    loadingMore = false;
     failure = null;
     notifyListeners();
     final result = await getProducts(ProductQuery(search: search, category: category, sort: sort));
@@ -58,7 +63,7 @@ class CatalogController extends ChangeNotifier {
   }
 
   Future<void> loadMore() async {
-    if (loadingMore || status != CatalogStatus.ready || !hasMore) return;
+    if (loadingMore || failure != null || status != CatalogStatus.ready || !hasMore) return;
     loadingMore = true;
     notifyListeners();
     final generation = _generation;
@@ -74,6 +79,11 @@ class CatalogController extends ChangeNotifier {
     }
     loadingMore = false;
     notifyListeners();
+  }
+
+  Future<void> retryLoadMore() async {
+    failure = null;
+    await loadMore();
   }
 
   void setSearch(String value) {
