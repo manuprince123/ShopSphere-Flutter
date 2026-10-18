@@ -66,9 +66,9 @@ Evidence: [request/results JSON](live-api-results.json) and [screenshots](../scr
 1. **Release startup crash:** Android R8 renamed Kotlin coroutine/runtime types referenced by the shared-preferences JNI bindings. Added targeted keep rules in `android/app/proguard-rules.pro`; rebuilt, reinstalled, and verified login, cart persistence and restart.
 2. **Short-screen error actions:** Error/empty columns could extend beyond the available landscape height. Made the state views scrollable, added two regression tests, and checked the final APK's landscape retry button at 1.3× text.
 
-## iOS build note
+## iOS build verification
 
-The iOS runner project and plugin registrant are present. `flutter build ios --no-codesign` could not be executed to compilation because this QA host has Apple Command Line Tools only (`/Library/Developer/CommandLineTools`) and no Xcode/xcodebuild installation. No iOS build-pass claim is made.
+The local QA host has Apple Command Line Tools but not full Xcode, so iOS compilation is verified by the repository's macOS GitHub Actions job. `flutter build ios --release --no-codesign` passed on run [39140134519](https://github.com/manuprince123/ShopSphere-Flutter/actions/runs/39140134519). This verifies compilation only; no iOS device or signed-distribution claim is made.
 
 The emulator environment temporarily lost DNS resolution. Host HTTPS and emulator IP connectivity still worked. Restarting the test AVDs with `-dns-server 8.8.8.8,1.1.1.1` restored name resolution; the live suite subsequently passed.
 
@@ -89,6 +89,7 @@ Use a test device for the integration scenario: it clears this app's tokens/cart
 - Unit/widget suite: 66 passed.
 - Coverage: 1,257 / 1,612 measured lines, 78.0%.
 - Live Android integration scenario: passed, with seven recorded checks and six captured states.
+- Unsigned iOS release compilation: passed in macOS GitHub Actions.
 - Capture inventory: ten phone images, two tablet images, six integration-test images.
 
 ## Remaining submission work

@@ -83,7 +83,7 @@ The shared `mapFailure` function converts Dio timeouts, socket errors, HTTP 400/
 4. Run `dart format lib test`, `flutter analyze` and `flutter test`.
 5. Build with `flutter build apk --release`.
 
-No code generation is required. The Android and iOS platform projects are included in this repository. Android is fully build/device verified; the iOS target was not compiled in the local QA environment because full Xcode is not installed.
+No code generation is required. The Android and iOS platform projects are included in this repository. Android is fully build/device verified, and the unsigned iOS release compilation passes in the macOS GitHub Actions job.
 
 ## Testing
 
