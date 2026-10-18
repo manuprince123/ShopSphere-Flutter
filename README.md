@@ -2,22 +2,34 @@
 
 ShopSphere is a Material 3 shopping app for the Prosessed Flutter Developer Intern assignment. It uses the public DummyJSON API for sign-in, product discovery, profile and simulated checkout. The cart is stored on the device. The app is designed for phones and tablets, with a navigation rail and a side-by-side product view on wide layouts.
 
-> **Submission status:** Static analysis and automated tests pass. APK, demo video, screenshots and public links still need device verification and publication. The assignment brief is intentionally excluded from this repository because it is marked confidential.
+> **Submission status:** Release APK built, signature-verified, installed and smoke-tested on Android 8.0 phone and tablet emulators. Phone/tablet screenshots and live API error-test evidence are included. Demo video, GitHub Release, Drive upload and public-link checks remain before submission. The confidential assignment brief is intentionally excluded from this repository.
+
+Local APK: `release/ShopSphere_Manu_R_v1.0.0.apk` (53.9 MB; build artifact, not committed). Published APK and demo-video links are pending. See the [device QA report](docs/QA_REPORT.md) for tested flows, artifact checksum and reproduction commands.
 
 ## Screenshots
 
-Pending device verification: four phone and two tablet/landscape screenshots will be added to `screenshots/` before submission.
+Captured from the installed Android release app. Tablet captures use 1.3× system text.
+
+| Catalogue | Product details | Cart | Order confirmation |
+| --- | --- | --- | --- |
+| ![Phone catalogue](screenshots/phone/01-catalogue.png) | ![Phone product details](screenshots/phone/02-product-details.png) | ![Phone cart](screenshots/phone/03-cart.png) | ![Phone order confirmation](screenshots/phone/04-order-confirmation.png) |
+
+| Tablet landscape: master-detail | Tablet portrait: three-column grid |
+| --- | --- |
+| ![Tablet landscape](screenshots/tablet/01-landscape-master-detail.png) | ![Tablet portrait](screenshots/tablet/02-portrait-grid.png) |
+
+See the [screenshot index](screenshots/README.md) for profile, airplane-mode recovery, large-text checks, and the separate integration-test captures.
 
 ## Features
 
 | Scope | Status |
 | --- | --- |
-| Splash session check; login validation, secure tokens, invalid-credentials feedback | Implemented; device verification pending |
-| Paginated product catalogue, pull-to-refresh, API categories, search debounce and sorting | Implemented; device verification pending |
-| Product carousel, reviews, stock, quantity selector and missing-product handling | Implemented; device verification pending |
-| Persistent cart, totals, badge, simulated checkout and confirmation | Implemented; device verification pending |
-| Profile via `/auth/me`, logout and expiry handling | Implemented; device verification pending |
-| Phone grid/bottom navigation, tablet rail and wide master-detail layout | Implemented; device verification pending |
+| Splash session check; login validation, secure tokens, invalid-credentials feedback | Implemented; automated and Android checks pass |
+| Paginated product catalogue, pull-to-refresh, API categories, search debounce and sorting | Implemented; automated tests and Android catalogue/search checks |
+| Product carousel, reviews, stock, quantity selector and missing-product handling | Implemented; Android details and live 404 checks pass |
+| Persistent cart, totals, badge, simulated checkout and confirmation | Implemented; Android restart and checkout checks pass |
+| Profile via `/auth/me`, logout and expiry handling | Implemented; Android profile and live 401 checks pass |
+| Phone grid/bottom navigation, tablet rail and wide master-detail layout | Verified in phone/tablet portrait and landscape, including 1.3× text |
 | GitHub Actions for format, analysis and tests | Configured; remote run pending |
 | Automatic token refresh, dark theme, wishlist, offline catalogue cache, localization | Not implemented (optional bonus scope) |
 
@@ -66,7 +78,15 @@ No code generation is used. The Android and iOS platform projects are included i
 
 ## Testing
 
-Run `flutter test --coverage`. **57 tests pass**, covering JSON fixtures, repository success and failure paths, validation, failure mapping, controller state transitions, cart totals, checkout, and large-text layout. Widget flows cover a narrow phone, medium tablet and wide landscape layout at 1.3× text scale. The current line coverage is **80.0%** (918 of 1,147 measured lines). `flutter analyze` reports zero issues.
+Run `flutter test --coverage`. **59 unit/widget tests pass**, covering JSON fixtures, repository success and failure paths, validation, failure mapping, controller state transitions, cart totals, checkout, and large-text layout. Short-viewport regression tests verify that error and empty-state actions remain reachable at 1.3× text. Current line coverage is **81.3%** (932 of 1,147 measured lines). `flutter analyze` reports zero issues.
+
+The separate Android live-API integration scenario also passes. It exercises actual DummyJSON HTTP 400, 500, 404, delayed success, receive timeout and 401 responses through the app's repositories/controllers/UI. Run it on a disposable test emulator (it clears that app's stored session/cart):
+
+```sh
+flutter drive --driver=test_driver/live_api_test.dart --target=integration_test/live_api_test.dart -d <android-device-id> --debug
+```
+
+The driver saves screenshots in `screenshots/qa/` and a token-free request/result summary in [docs/live-api-results.json](docs/live-api-results.json). Test endpoint routing and the shortened timeout exist only in the integration entry point; the delivered APK uses `lib/main.dart` and normal production timeouts. After running integration tests, use `flutter build apk --release` with its default pub step so Flutter regenerates release plugin registration.
 
 ## Test credentials
 
@@ -79,7 +99,7 @@ DummyJSON checkout only simulates an order; the server does not persist it. The 
 
 ## AI assistance
 
-Codex assisted with implementation planning, code generation and test scaffolding. The author must review and understand the code and verify it on a real device or emulator before submission.
+Codex assisted with implementation planning, code generation, test scaffolding, Android emulator QA and screenshot capture. The author must review and understand every line before submission and the follow-up interview. Device verification results and remaining submission work are documented in the QA report.
 
 ## Author
 

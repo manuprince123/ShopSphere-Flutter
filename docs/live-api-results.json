@@ -1,0 +1,84 @@
+{
+  "checks": [
+    "Invalid login: HTTP 400, inline error, no crash",
+    "Server error: real /http/500 maps to friendly error and retry",
+    "Retry after server error: catalogue recovers",
+    "Missing product: real /products/9999 maps to not-found page with back action",
+    "delay=3000: skeleton remains visible, then real products load (3721 ms)",
+    "delay=5000 with test-only 500 ms receive timeout: friendly timeout state",
+    "Invalid access token: real /auth/me 401 signs out, clears tokens/cart, explains expiry"
+  ],
+  "requests": [
+    {
+      "method": "POST",
+      "path": "/auth/login",
+      "query": "",
+      "status": 400,
+      "type": "badResponse"
+    },
+    {
+      "method": "POST",
+      "path": "/auth/login",
+      "query": "",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/products",
+      "query": "limit=20&skip=0",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/products/categories",
+      "query": "",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/http/500",
+      "query": "",
+      "status": 500,
+      "type": "badResponse"
+    },
+    {
+      "method": "GET",
+      "path": "/products",
+      "query": "limit=20&skip=0",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/products/9999",
+      "query": "",
+      "status": 404,
+      "type": "badResponse"
+    },
+    {
+      "method": "GET",
+      "path": "/products",
+      "query": "limit=20&skip=0&delay=3000",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/products",
+      "query": "limit=20&skip=0&delay=5000",
+      "status": null,
+      "type": "receiveTimeout"
+    },
+    {
+      "method": "GET",
+      "path": "/products",
+      "query": "limit=20&skip=0",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/auth/me",
+      "query": "",
+      "status": 401,
+      "type": "badResponse"
+    }
+  ]
+}
