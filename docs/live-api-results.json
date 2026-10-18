@@ -4,9 +4,9 @@
     "Server error: real /http/500 maps to friendly error and retry",
     "Retry after server error: catalogue recovers",
     "Missing product: real /products/9999 maps to not-found page with back action",
-    "delay=3000: skeleton remains visible, then real products load (3721 ms)",
+    "delay=3000: skeleton remains visible, then real products load (4410 ms)",
     "delay=5000 with test-only 500 ms receive timeout: friendly timeout state",
-    "Invalid access token: real /auth/me 401 signs out, clears tokens/cart, explains expiry"
+    "Invalid access + refresh token: protected request attempts refresh, then signs out, clears tokens/cart, and explains expiry"
   ],
   "requests": [
     {
@@ -74,10 +74,17 @@
       "status": 200
     },
     {
-      "method": "GET",
-      "path": "/auth/me",
+      "method": "POST",
+      "path": "/auth/refresh",
       "query": "",
-      "status": 401,
+      "status": 403,
+      "type": "badResponse"
+    },
+    {
+      "method": "POST",
+      "path": "/auth/refresh",
+      "query": "",
+      "status": 403,
       "type": "badResponse"
     }
   ]

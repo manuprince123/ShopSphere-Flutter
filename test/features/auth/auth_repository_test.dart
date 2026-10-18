@@ -3,6 +3,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:mocktail/mocktail.dart';
 import 'package:shopsphere/core/error/failure.dart';
 import 'package:shopsphere/features/auth/data/auth_repository_impl.dart';
+import 'package:shopsphere/features/auth/data/auth_remote_data_source.dart';
 import 'package:shopsphere/features/auth/data/token_store.dart';
 import 'package:shopsphere/features/auth/domain/auth.dart';
 
@@ -17,7 +18,7 @@ void main() {
   setUp(() {
     dio = MockDio();
     store = MockTokenStore();
-    repository = AuthRepositoryImpl(dio, store);
+    repository = AuthRepositoryImpl(DioAuthRemoteDataSource(dio), store);
   });
 
   test('login stores both tokens and parses the signed-in user', () async {

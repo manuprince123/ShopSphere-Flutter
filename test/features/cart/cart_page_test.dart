@@ -22,8 +22,11 @@ void main() {
   ) async {
     await tester.binding.setSurfaceSize(const Size(650, 350));
     addTearDown(() => tester.binding.setSurfaceSize(null));
+    final repository = EmptyCartRepository();
     final controller = CartController(
-      EmptyCartRepository(),
+      LoadCart(repository),
+      SaveCart(repository),
+      PlaceOrder(repository),
       const CalculateCartTotals(),
     );
     await controller.initialize();

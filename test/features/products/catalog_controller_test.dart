@@ -49,7 +49,10 @@ class FakeProducts implements ProductRepository {
 void main() {
   test('catalog emits loading then ready for a successful page', () async {
     final repo = FakeProducts();
-    final controller = CatalogController(repo, GetProducts(repo));
+    final controller = CatalogController(
+      GetProducts(repo),
+      GetCategories(repo),
+    );
     final states = <CatalogStatus>[];
     controller.addListener(() => states.add(controller.status));
     final pending = controller.load();
@@ -61,7 +64,10 @@ void main() {
 
   test('empty page has a dedicated empty state', () async {
     final repo = FakeProducts();
-    final controller = CatalogController(repo, GetProducts(repo));
+    final controller = CatalogController(
+      GetProducts(repo),
+      GetCategories(repo),
+    );
     final pending = controller.load();
     repo.queue.single.complete(const Success(ProductPage([], 0)));
     await pending;
@@ -70,7 +76,10 @@ void main() {
 
   test('server failure keeps a retryable failure state', () async {
     final repo = FakeProducts();
-    final controller = CatalogController(repo, GetProducts(repo));
+    final controller = CatalogController(
+      GetProducts(repo),
+      GetCategories(repo),
+    );
     final pending = controller.load();
     repo.queue.single.complete(
       const Failed(Failure(FailureKind.server, 'Retry later')),
@@ -82,7 +91,10 @@ void main() {
 
   test('infinite scroll stops when the reported total is loaded', () async {
     final repo = FakeProducts();
-    final controller = CatalogController(repo, GetProducts(repo));
+    final controller = CatalogController(
+      GetProducts(repo),
+      GetCategories(repo),
+    );
     final first = controller.load();
     repo.queue.first.complete(const Success(ProductPage([sample], 2)));
     await first;

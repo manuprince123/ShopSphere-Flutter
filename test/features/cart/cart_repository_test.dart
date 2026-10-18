@@ -3,6 +3,8 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:mocktail/mocktail.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:shopsphere/core/error/failure.dart';
+import 'package:shopsphere/features/cart/data/cart_local_data_source.dart';
+import 'package:shopsphere/features/cart/data/cart_remote_data_source.dart';
 import 'package:shopsphere/features/cart/data/cart_repository_impl.dart';
 import 'package:shopsphere/features/cart/domain/cart.dart';
 import 'package:shopsphere/features/products/domain/product.dart';
@@ -29,7 +31,10 @@ void main() {
   setUp(() async {
     SharedPreferences.setMockInitialValues({});
     dio = MockDio();
-    repository = CartRepositoryImpl(await SharedPreferences.getInstance(), dio);
+    repository = CartRepositoryImpl(
+      PreferencesCartLocalDataSource(await SharedPreferences.getInstance()),
+      DioCartRemoteDataSource(dio),
+    );
   });
 
   test('cart survives a repository reload', () async {

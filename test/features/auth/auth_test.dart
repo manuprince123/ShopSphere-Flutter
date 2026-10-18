@@ -28,6 +28,13 @@ void main() {
     profile = MockProfileRepository();
   });
 
+  AuthController buildController() => AuthController(
+    CheckSession(auth),
+    Login(auth),
+    GetProfile(profile),
+    Logout(auth),
+  );
+
   test('login use case validates before calling repository', () async {
     final result = await Login(auth)('a', 'b');
     expect((result as Failed<AuthUser>).failure.kind, FailureKind.validation);
@@ -47,7 +54,7 @@ void main() {
     () async {
       when(() => auth.hasSession()).thenAnswer((_) async => true);
       when(() => profile.me()).thenAnswer((_) async => const Success(user));
-      final controller = AuthController(auth, Login(auth), profile);
+      final controller = buildController();
       await controller.bootstrap();
       expect(controller.status, AuthStatus.signedIn);
       expect(controller.user?.fullName, 'Emily Smith');
@@ -60,7 +67,7 @@ void main() {
       (_) async => const Failed(Failure(FailureKind.unauthorized, 'Expired')),
     );
     when(() => auth.logout()).thenAnswer((_) async {});
-    final controller = AuthController(auth, Login(auth), profile);
+    final controller = buildController();
     await controller.bootstrap();
     expect(controller.status, AuthStatus.signedOut);
     verify(() => auth.logout()).called(1);
@@ -71,7 +78,7 @@ void main() {
     when(() => profile.me()).thenAnswer(
       (_) async => const Failed(Failure(FailureKind.network, 'Offline')),
     );
-    final controller = AuthController(auth, Login(auth), profile);
+    final controller = buildController();
     await controller.bootstrap();
     expect(controller.status, AuthStatus.restoreFailure);
     verifyNever(() => auth.logout());
@@ -81,7 +88,7 @@ void main() {
     final completer = Completer<Result<AuthUser>>();
     when(() => auth.login('emilys', 'emilyspass'))
         .thenAnswer((_) => completer.future);
-    final controller = AuthController(auth, Login(auth), profile);
+    final controller = buildController();
     final states = <AuthStatus>[];
     controller.addListener(() => states.add(controller.status));
     final pending = controller.signIn('emilys', 'emilyspass');

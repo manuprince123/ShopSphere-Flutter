@@ -218,11 +218,17 @@ void main() {
     expect(await sl<TokenStore>().readRefreshToken(), isNull);
     expect(sl<CartController>().count, 0);
     expect(
-      requests.any((r) => r['path'] == '/auth/me' && r['status'] == 401),
+      requests.any(
+        (r) =>
+            r['path'] == '/auth/refresh' &&
+            (r['status'] as int?) != null &&
+            (r['status'] as int) >= 400 &&
+            (r['status'] as int) < 500,
+      ),
       isTrue,
     );
     checks.add(
-      'Invalid access token: real /auth/me 401 signs out, clears tokens/cart, explains expiry',
+      'Invalid access + refresh token: protected request attempts refresh, then signs out, clears tokens/cart, and explains expiry',
     );
     await capture('06-session-expired');
     expect(tester.takeException(), isNull);

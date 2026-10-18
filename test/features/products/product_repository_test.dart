@@ -4,7 +4,10 @@ import 'dart:io';
 import 'package:dio/dio.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mocktail/mocktail.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:shopsphere/core/error/failure.dart';
+import 'package:shopsphere/features/products/data/product_local_data_source.dart';
+import 'package:shopsphere/features/products/data/product_remote_data_source.dart';
 import 'package:shopsphere/features/products/data/product_repository_impl.dart';
 import 'package:shopsphere/features/products/domain/product.dart';
 
@@ -17,9 +20,13 @@ void main() {
     File('test/fixtures/products.json').readAsStringSync(),
   ) as Map<String, dynamic>;
 
-  setUp(() {
+  setUp(() async {
+    SharedPreferences.setMockInitialValues({});
     dio = MockDio();
-    repository = ProductRepositoryImpl(dio);
+    repository = ProductRepositoryImpl(
+      DioProductRemoteDataSource(dio),
+      PreferencesProductLocalDataSource(await SharedPreferences.getInstance()),
+    );
   });
 
   test('repository returns parsed products and total on success', () async {
@@ -76,6 +83,34 @@ void main() {
     );
     final result = await repository.getProducts(const ProductQuery());
     expect((result as Failed<ProductPage>).failure.kind, FailureKind.network);
+  });
+
+  test('offline request falls back to the cached product page', () async {
+    var calls = 0;
+    when(
+      () => dio.get<Map<String, dynamic>>(
+        '/products',
+        queryParameters: any(named: 'queryParameters'),
+      ),
+    ).thenAnswer((_) async {
+      calls++;
+      if (calls == 1) {
+        return Response(
+          data: fixture,
+          requestOptions: RequestOptions(path: '/products'),
+        );
+      }
+      throw DioException(
+        requestOptions: RequestOptions(path: '/products'),
+        type: DioExceptionType.connectionError,
+      );
+    });
+
+    await repository.getProducts(const ProductQuery());
+    final result = await repository.getProducts(const ProductQuery());
+    final cached = (result as Success<ProductPage>).value;
+    expect(cached.products.single.title, 'Everyday Backpack');
+    expect(cached.isCached, isTrue);
   });
 
   test('single product 404 becomes not-found failure', () async {

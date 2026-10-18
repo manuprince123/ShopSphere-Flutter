@@ -4,6 +4,7 @@ import 'package:mocktail/mocktail.dart';
 import 'package:shopsphere/core/error/failure.dart';
 import 'package:shopsphere/features/auth/domain/auth.dart';
 import 'package:shopsphere/features/profile/data/profile_repository_impl.dart';
+import 'package:shopsphere/features/profile/data/profile_remote_data_source.dart';
 
 class MockDio extends Mock implements Dio {}
 
@@ -13,7 +14,7 @@ void main() {
   setUpAll(() => registerFallbackValue(Options()));
   setUp(() {
     dio = MockDio();
-    repository = ProfileRepositoryImpl(dio);
+    repository = ProfileRepositoryImpl(DioProfileRemoteDataSource(dio));
   });
 
   test('profile request is protected and parses contact fields', () async {

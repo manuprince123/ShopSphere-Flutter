@@ -16,10 +16,12 @@ void main() {
     tester,
   ) async {
     final repository = MockAuthRepository();
+    final profile = MockProfileRepository();
     final controller = AuthController(
-      repository,
+      CheckSession(repository),
       Login(repository),
-      MockProfileRepository(),
+      GetProfile(profile),
+      Logout(repository),
     );
     await tester.pumpWidget(
       ChangeNotifierProvider.value(
@@ -42,10 +44,12 @@ void main() {
     await tester.binding.setSurfaceSize(const Size(320, 640));
     addTearDown(() => tester.binding.setSurfaceSize(null));
     final repository = MockAuthRepository();
+    final profile = MockProfileRepository();
     final controller = AuthController(
-      repository,
+      CheckSession(repository),
       Login(repository),
-      MockProfileRepository(),
+      GetProfile(profile),
+      Logout(repository),
     );
     await tester.pumpWidget(
       ChangeNotifierProvider.value(

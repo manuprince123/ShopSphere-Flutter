@@ -29,6 +29,13 @@ class FakeCartRepository implements CartRepository {
       orderResult;
 }
 
+CartController buildController(FakeCartRepository repository) => CartController(
+  LoadCart(repository),
+  SaveCart(repository),
+  PlaceOrder(repository),
+  const CalculateCartTotals(),
+);
+
 void main() {
   test('cart totals calculate subtotal, discount and grand total', () {
     final totals = const CalculateCartTotals()([const CartItem(bag, 2)]);
@@ -41,7 +48,7 @@ void main() {
   });
   test('adding, updating and removing persists every change', () async {
     final repo = FakeCartRepository();
-    final cart = CartController(repo, const CalculateCartTotals());
+    final cart = buildController(repo);
     await cart.initialize();
     await cart.add(bag, 2);
     expect(cart.count, 2);
@@ -52,16 +59,13 @@ void main() {
     expect(repo.stored, isEmpty);
   });
   test('quantity cannot exceed stock', () async {
-    final cart = CartController(
-      FakeCartRepository(),
-      const CalculateCartTotals(),
-    );
+    final cart = buildController(FakeCartRepository());
     await cart.add(bag, 20);
     expect(cart.count, 5);
   });
   test('successful checkout clears and persists the cart', () async {
     final repo = FakeCartRepository();
-    final cart = CartController(repo, const CalculateCartTotals());
+    final cart = buildController(repo);
     await cart.add(bag, 1);
     expect(await cart.placeOrder(1), isTrue);
     expect(cart.checkoutStatus, CheckoutStatus.success);
@@ -71,7 +75,7 @@ void main() {
   test('failed checkout retains cart for retry', () async {
     final repo = FakeCartRepository()
       ..orderResult = const Failed(Failure(FailureKind.server, 'Retry'));
-    final cart = CartController(repo, const CalculateCartTotals());
+    final cart = buildController(repo);
     await cart.add(bag, 1);
     expect(await cart.placeOrder(1), isFalse);
     expect(cart.items, hasLength(1));
@@ -79,7 +83,7 @@ void main() {
   });
   test('clearing a session removes persisted cart items', () async {
     final repo = FakeCartRepository();
-    final cart = CartController(repo, const CalculateCartTotals());
+    final cart = buildController(repo);
     await cart.add(bag, 1);
     await cart.clear();
     expect(cart.count, 0);

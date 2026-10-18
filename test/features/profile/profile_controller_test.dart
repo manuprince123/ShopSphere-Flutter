@@ -23,7 +23,7 @@ void main() {
     final repository = MockProfileRepository();
     final completer = Completer<Result<AuthUser>>();
     when(() => repository.me()).thenAnswer((_) => completer.future);
-    final controller = ProfileController(repository);
+    final controller = ProfileController(GetProfile(repository));
     final states = <ProfileStatus>[];
     controller.addListener(() => states.add(controller.status));
     final pending = controller.load();
@@ -38,7 +38,7 @@ void main() {
     when(() => repository.me()).thenAnswer(
       (_) async => const Failed(Failure(FailureKind.server, 'Try again')),
     );
-    final controller = ProfileController(repository);
+    final controller = ProfileController(GetProfile(repository));
     await controller.load();
     expect(controller.status, ProfileStatus.failure);
     expect(controller.failure?.kind, FailureKind.server);
