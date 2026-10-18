@@ -7,8 +7,8 @@ import '../domain/profile_repository.dart';
 enum ProfileStatus { loading, ready, failure }
 
 class ProfileController extends ChangeNotifier {
-  ProfileController(this.repository);
-  final ProfileRepository repository;
+  ProfileController(this.getProfile);
+  final GetProfile getProfile;
   ProfileStatus status = ProfileStatus.loading;
   AuthUser? user;
   Failure? failure;
@@ -18,7 +18,7 @@ class ProfileController extends ChangeNotifier {
     status = ProfileStatus.loading;
     failure = null;
     notifyListeners();
-    final result = await repository.me();
+    final result = await getProfile();
     if (_disposed) return;
     if (result case Success<AuthUser>(:final value)) {
       user = value;

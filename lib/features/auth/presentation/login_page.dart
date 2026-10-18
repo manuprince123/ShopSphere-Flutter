@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
+import '../../../core/l10n/app_localizations.dart';
 import '../../../core/theme/app_theme.dart';
 import 'auth_controller.dart';
 
@@ -55,22 +56,22 @@ class _LoginPageState extends State<LoginPage> {
                     ),
                     const SizedBox(height: 34),
                     Text(
-                      'Good things await.',
+                      context.l10n.t('goodThings'),
                       style: Theme.of(context).textTheme.headlineLarge,
                     ),
                     const SizedBox(height: 8),
-                    const Text('Sign in to explore your next favourite find.'),
+                    Text(context.l10n.t('signInSubtitle')),
                     const SizedBox(height: 34),
                     TextFormField(
                       controller: username,
                       textInputAction: TextInputAction.next,
                       autofillHints: const [AutofillHints.username],
-                      decoration: const InputDecoration(
-                        labelText: 'Username',
-                        prefixIcon: Icon(Icons.person_outline),
+                      decoration: InputDecoration(
+                        labelText: context.l10n.t('username'),
+                        prefixIcon: const Icon(Icons.person_outline),
                       ),
                       validator: (value) => (value?.trim().length ?? 0) < 3
-                          ? 'Enter at least 3 characters'
+                          ? context.l10n.t('usernameValidation')
                           : null,
                     ),
                     const SizedBox(height: 16),
@@ -79,10 +80,12 @@ class _LoginPageState extends State<LoginPage> {
                       obscureText: !visible,
                       autofillHints: const [AutofillHints.password],
                       decoration: InputDecoration(
-                        labelText: 'Password',
+                        labelText: context.l10n.t('password'),
                         prefixIcon: const Icon(Icons.lock_outline),
                         suffixIcon: IconButton(
-                          tooltip: visible ? 'Hide password' : 'Show password',
+                          tooltip: visible
+                              ? context.l10n.t('hidePassword')
+                              : context.l10n.t('showPassword'),
                           onPressed: () => setState(() => visible = !visible),
                           icon: Icon(
                             visible
@@ -92,7 +95,7 @@ class _LoginPageState extends State<LoginPage> {
                         ),
                       ),
                       validator: (value) => (value?.length ?? 0) < 6
-                          ? 'Enter at least 6 characters'
+                          ? context.l10n.t('passwordValidation')
                           : null,
                       onFieldSubmitted: (_) => submit(),
                     ),
@@ -117,13 +120,15 @@ class _LoginPageState extends State<LoginPage> {
                                 color: Colors.white,
                               ),
                             )
-                          : const Text('Sign in'),
+                          : Text(context.l10n.t('signIn')),
                     ),
                     const SizedBox(height: 20),
-                    const Text(
-                      'Demo access  ·  emilys / emilyspass',
+                    Text(
+                      context.l10n.t('demoAccess'),
                       textAlign: TextAlign.center,
-                      style: TextStyle(color: Color(0xFF64716D)),
+                      style: TextStyle(
+                        color: Theme.of(context).colorScheme.onSurfaceVariant,
+                      ),
                     ),
                   ],
                 ),

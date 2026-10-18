@@ -35,3 +35,22 @@ abstract interface class CartRepository {
   Future<void> save(List<CartItem> items);
   Future<Result<int>> placeOrder(int userId, List<CartItem> items);
 }
+
+class LoadCart {
+  const LoadCart(this.repository);
+  final CartRepository repository;
+  Future<List<CartItem>> call() => repository.load();
+}
+
+class SaveCart {
+  const SaveCart(this.repository);
+  final CartRepository repository;
+  Future<void> call(List<CartItem> items) => repository.save(items);
+}
+
+class PlaceOrder {
+  const PlaceOrder(this.repository);
+  final CartRepository repository;
+  Future<Result<int>> call(int userId, List<CartItem> items) =>
+      repository.placeOrder(userId, items);
+}

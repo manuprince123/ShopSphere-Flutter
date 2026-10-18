@@ -41,3 +41,15 @@ class Login {
     return repository.login(username.trim(), password);
   }
 }
+
+class CheckSession {
+  const CheckSession(this.repository);
+  final AuthRepository repository;
+  Future<bool> call() => repository.hasSession();
+}
+
+class Logout {
+  const Logout(this.repository);
+  final AuthRepository repository;
+  Future<void> call() => repository.logout();
+}

@@ -2,6 +2,7 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
+import '../../../core/l10n/app_localizations.dart';
 import '../../../core/theme/app_theme.dart';
 import '../../../core/widgets/state_views.dart';
 import '../../auth/presentation/auth_controller.dart';
@@ -21,7 +22,7 @@ class CartPage extends StatelessWidget {
           Padding(
             padding: const EdgeInsets.fromLTRB(20, 12, 20, 12),
             child: Text(
-              'Your bag',
+              context.l10n.t('yourBag'),
               style: Theme.of(context).textTheme.headlineMedium,
             ),
           ),
@@ -31,12 +32,12 @@ class CartPage extends StatelessWidget {
               child: Center(child: CircularProgressIndicator()),
             ),
           if (cart.loaded && cart.items.isEmpty)
-            const SizedBox(
+            SizedBox(
               height: 250,
               child: EmptyView(
                 icon: Icons.shopping_bag_outlined,
-                title: 'Your bag is empty',
-                message: 'Find something you love in Explore.',
+                title: context.l10n.t('emptyBag'),
+                message: context.l10n.t('emptyBagMessage'),
               ),
             ),
           for (final item in cart.items)
@@ -54,7 +55,7 @@ class CartPage extends StatelessWidget {
         Padding(
           padding: const EdgeInsets.fromLTRB(20, 20, 20, 18),
           child: Text(
-            'Your bag',
+            context.l10n.t('yourBag'),
             style: Theme.of(context).textTheme.headlineMedium,
           ),
         ),
@@ -62,10 +63,10 @@ class CartPage extends StatelessWidget {
           child: !cart.loaded
               ? const Center(child: CircularProgressIndicator())
               : cart.items.isEmpty
-              ? const EmptyView(
+              ? EmptyView(
                   icon: Icons.shopping_bag_outlined,
-                  title: 'Your bag is empty',
-                  message: 'Find something you love in Explore.',
+                  title: context.l10n.t('emptyBag'),
+                  message: context.l10n.t('emptyBagMessage'),
                 )
               : ListView.builder(
                   padding: const EdgeInsets.symmetric(horizontal: 16),
@@ -122,7 +123,7 @@ class _CartRow extends StatelessWidget {
                 Row(
                   children: [
                     IconButton(
-                      tooltip: 'Decrease quantity',
+                      tooltip: context.l10n.t('decreaseQuantity'),
                       onPressed: () => context.read<CartController>().update(
                         item.product.id,
                         item.quantity - 1,
@@ -134,7 +135,7 @@ class _CartRow extends StatelessWidget {
                       style: const TextStyle(fontWeight: FontWeight.w700),
                     ),
                     IconButton(
-                      tooltip: 'Increase quantity',
+                      tooltip: context.l10n.t('increaseQuantity'),
                       onPressed: item.quantity < item.product.stock
                           ? () => context.read<CartController>().update(
                               item.product.id,
@@ -148,7 +149,7 @@ class _CartRow extends StatelessWidget {
                 Align(
                   alignment: Alignment.centerRight,
                   child: IconButton(
-                    tooltip: 'Remove item',
+                    tooltip: context.l10n.t('removeItem'),
                     icon: const Icon(Icons.delete_outline),
                     onPressed: () => context.read<CartController>().update(
                       item.product.id,
@@ -172,9 +173,9 @@ class _Summary extends StatelessWidget {
   Widget build(BuildContext context) {
     final totals = cart.totals;
     return Container(
-      decoration: const BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
+      decoration: BoxDecoration(
+        color: Theme.of(context).colorScheme.surfaceContainer,
+        borderRadius: const BorderRadius.vertical(top: Radius.circular(24)),
       ),
       padding: const EdgeInsets.fromLTRB(20, 18, 20, 20),
       child: SafeArea(
@@ -184,11 +185,15 @@ class _Summary extends StatelessWidget {
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              _totalRow('Subtotal', totals.subtotal),
+              _totalRow(context.l10n.t('subtotal'), totals.subtotal),
               const SizedBox(height: 6),
-              _totalRow('Discount', -totals.discount),
+              _totalRow(context.l10n.t('discount'), -totals.discount),
               const Divider(height: 22),
-              _totalRow('Grand total', totals.grandTotal, bold: true),
+              _totalRow(
+                context.l10n.t('grandTotal'),
+                totals.grandTotal,
+                bold: true,
+              ),
               if (cart.checkoutFailure != null) ...[
                 const SizedBox(height: 8),
                 Text(
@@ -229,7 +234,7 @@ class _Summary extends StatelessWidget {
                             color: Colors.white,
                           ),
                         )
-                      : const Text('Place order'),
+                      : Text(context.l10n.t('placeOrder')),
                 ),
               ),
             ],
@@ -254,7 +259,7 @@ class _Summary extends StatelessWidget {
         style: TextStyle(
           fontSize: bold ? 19 : 14,
           fontWeight: bold ? FontWeight.w800 : FontWeight.w500,
-          color: bold ? AppTheme.jade : AppTheme.ink,
+          color: bold ? AppTheme.jade : null,
         ),
       ),
     ],
@@ -266,7 +271,7 @@ class OrderSuccessPage extends StatelessWidget {
   final int? orderId;
   @override
   Widget build(BuildContext context) => Scaffold(
-    appBar: AppBar(title: const Text('Order confirmation')),
+    appBar: AppBar(title: Text(context.l10n.t('orderConfirmation'))),
     body: Center(
       child: Padding(
         padding: const EdgeInsets.all(24),
@@ -280,7 +285,7 @@ class OrderSuccessPage extends StatelessWidget {
             ),
             const SizedBox(height: 22),
             Text(
-              'Order placed!',
+              context.l10n.t('orderPlaced'),
               style: Theme.of(context).textTheme.headlineMedium,
             ),
             const SizedBox(height: 8),
@@ -291,7 +296,7 @@ class OrderSuccessPage extends StatelessWidget {
             const SizedBox(height: 24),
             FilledButton(
               onPressed: () => Navigator.pop(context),
-              child: const Text('Continue shopping'),
+              child: Text(context.l10n.t('continueShopping')),
             ),
           ],
         ),

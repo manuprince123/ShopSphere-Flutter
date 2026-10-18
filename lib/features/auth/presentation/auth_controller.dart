@@ -10,14 +10,16 @@ enum AuthStatus { checking, restoreFailure, signedOut, submitting, signedIn }
 
 class AuthController extends ChangeNotifier {
   AuthController(
-    this.repository,
+    this.checkSession,
     this.loginUseCase,
-    this.profileRepository, {
+    this.getProfile,
+    this.logout, {
     this.onSessionCleared,
   });
-  final AuthRepository repository;
+  final CheckSession checkSession;
   final Login loginUseCase;
-  final ProfileRepository profileRepository;
+  final GetProfile getProfile;
+  final Logout logout;
   final Future<void> Function()? onSessionCleared;
 
   AuthStatus status = AuthStatus.checking;
@@ -28,17 +30,17 @@ class AuthController extends ChangeNotifier {
     status = AuthStatus.checking;
     notifyListeners();
     try {
-      if (!await repository.hasSession()) {
+      if (!await checkSession()) {
         status = AuthStatus.signedOut;
       } else {
-        final result = await profileRepository.me();
+        final result = await getProfile();
         if (result case Success<AuthUser>(:final value)) {
           user = value;
           status = AuthStatus.signedIn;
         } else {
           final failure = (result as Failed<AuthUser>).failure;
           if (failure.kind == FailureKind.unauthorized) {
-            await repository.logout();
+            await logout();
             await onSessionCleared?.call();
             status = AuthStatus.signedOut;
             message = failure.message;
@@ -73,7 +75,7 @@ class AuthController extends ChangeNotifier {
   }
 
   Future<void> signOut({String? reason}) async {
-    await repository.logout();
+    await logout();
     await onSessionCleared?.call();
     user = null;
     message = reason;

@@ -47,9 +47,10 @@ class Category {
 }
 
 class ProductPage {
-  const ProductPage(this.products, this.total);
+  const ProductPage(this.products, this.total, {this.isCached = false});
   final List<Product> products;
   final int total;
+  final bool isCached;
 }
 
 enum ProductSort { featured, priceLow, priceHigh, rating, title }

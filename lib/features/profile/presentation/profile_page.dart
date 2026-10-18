@@ -3,9 +3,11 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 import '../../../core/di/locator.dart';
+import '../../../core/l10n/app_localizations.dart';
 import '../../../core/theme/app_theme.dart';
 import '../../../core/widgets/state_views.dart';
 import '../../auth/presentation/auth_controller.dart';
+import '../../settings/presentation/settings_controller.dart';
 import 'profile_controller.dart';
 
 class ProfilePage extends StatelessWidget {
@@ -30,7 +32,7 @@ class _ProfileBody extends StatelessWidget {
         Padding(
           padding: const EdgeInsets.fromLTRB(20, 20, 20, 18),
           child: Text(
-            'Your profile',
+            context.l10n.t('yourProfile'),
             style: Theme.of(context).textTheme.headlineMedium,
           ),
         ),
@@ -94,23 +96,67 @@ class _ProfileDetails extends StatelessWidget {
             children: [
               ListTile(
                 leading: const Icon(Icons.email_outlined),
-                title: const Text('Email'),
+                title: Text(context.l10n.t('email')),
                 subtitle: Text(user.email),
               ),
               const Divider(height: 1, indent: 58),
               ListTile(
                 leading: const Icon(Icons.phone_outlined),
-                title: const Text('Phone'),
+                title: Text(context.l10n.t('phone')),
                 subtitle: Text(user.phone),
               ),
             ],
           ),
         ),
         const SizedBox(height: 24),
+        Text(
+          context.l10n.t('appearance'),
+          style: Theme.of(context).textTheme.titleLarge,
+        ),
+        const SizedBox(height: 10),
+        Card(
+          child: Consumer<SettingsController>(
+            builder: (context, settings, _) => Column(
+              children: [
+                SwitchListTile(
+                  secondary: const Icon(Icons.dark_mode_outlined),
+                  title: Text(context.l10n.t('darkMode')),
+                  value: settings.themeMode == ThemeMode.dark,
+                  onChanged: settings.setDarkMode,
+                ),
+                const Divider(height: 1, indent: 58),
+                ListTile(
+                  leading: const Icon(Icons.language_rounded),
+                  title: Text(context.l10n.t('language')),
+                  trailing: DropdownButton<String>(
+                    value: settings.locale.languageCode,
+                    underline: const SizedBox.shrink(),
+                    onChanged: (value) {
+                      if (value != null) {
+                        settings.setLocale(Locale(value));
+                      }
+                    },
+                    items: [
+                      DropdownMenuItem(
+                        value: 'en',
+                        child: Text(context.l10n.t('english')),
+                      ),
+                      DropdownMenuItem(
+                        value: 'hi',
+                        child: Text(context.l10n.t('hindi')),
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
+        const SizedBox(height: 24),
         OutlinedButton.icon(
           onPressed: () => context.read<AuthController>().signOut(),
           icon: const Icon(Icons.logout_rounded),
-          label: const Text('Sign out'),
+          label: Text(context.l10n.t('signOut')),
         ),
       ],
     );

@@ -1,12 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
+import '../../core/l10n/app_localizations.dart';
 import '../../core/theme/app_theme.dart';
 import '../cart/presentation/cart_controller.dart';
 import '../cart/presentation/cart_page.dart';
 import '../products/presentation/catalog_page.dart';
 import '../products/presentation/product_detail_page.dart';
 import '../profile/presentation/profile_page.dart';
+import '../wishlist/presentation/wishlist_page.dart';
 
 class ShopShell extends StatefulWidget {
   const ShopShell({super.key});
@@ -25,19 +27,24 @@ class _ShopShellState extends State<ShopShell> {
     final expanded = width > 1024;
     final count = context.select<CartController, int>((cart) => cart.count);
     final destinations = [
-      const NavigationDestination(
-        icon: Icon(Icons.grid_view_outlined),
-        selectedIcon: Icon(Icons.grid_view_rounded),
-        label: 'Explore',
+      NavigationDestination(
+        icon: const Icon(Icons.grid_view_outlined),
+        selectedIcon: const Icon(Icons.grid_view_rounded),
+        label: context.l10n.t('explore'),
+      ),
+      NavigationDestination(
+        icon: const Icon(Icons.favorite_border_rounded),
+        selectedIcon: const Icon(Icons.favorite_rounded),
+        label: context.l10n.t('saved'),
       ),
       NavigationDestination(
         icon: CartIcon(count: count),
-        label: 'Cart',
+        label: context.l10n.t('cart'),
       ),
-      const NavigationDestination(
-        icon: Icon(Icons.person_outline_rounded),
-        selectedIcon: Icon(Icons.person_rounded),
-        label: 'Profile',
+      NavigationDestination(
+        icon: const Icon(Icons.person_outline_rounded),
+        selectedIcon: const Icon(Icons.person_rounded),
+        label: context.l10n.t('profile'),
       ),
     ];
 
@@ -56,24 +63,24 @@ class _ShopShellState extends State<ShopShell> {
                   ),
                   Container(
                     width: 450,
-                    decoration: const BoxDecoration(
-                      color: Colors.white,
-                      border: Border(
+                    decoration: BoxDecoration(
+                      color: Theme.of(context).colorScheme.surfaceContainer,
+                      border: const Border(
                         left: BorderSide(color: Color(0xFFE6EAE4)),
                       ),
                     ),
                     child: selectedProductId == null
-                        ? const Center(
+                        ? Center(
                             child: Column(
                               mainAxisSize: MainAxisSize.min,
                               children: [
-                                Icon(
+                                const Icon(
                                   Icons.touch_app_outlined,
                                   size: 48,
                                   color: AppTheme.jade,
                                 ),
-                                SizedBox(height: 12),
-                                Text('Select a product to see details'),
+                                const SizedBox(height: 12),
+                                Text(context.l10n.t('selectProduct')),
                               ],
                             ),
                           )
@@ -94,6 +101,16 @@ class _ShopShellState extends State<ShopShell> {
               );
         break;
       case 1:
+        page = WishlistPage(
+          onProductTap: (id) => Navigator.push(
+            context,
+            MaterialPageRoute<void>(
+              builder: (_) => ProductDetailPage(productId: id),
+            ),
+          ),
+        );
+        break;
+      case 2:
         page = const CartPage();
         break;
       default:
@@ -107,7 +124,9 @@ class _ShopShellState extends State<ShopShell> {
             : Row(
                 children: [
                   NavigationRail(
-                    backgroundColor: Colors.white,
+                    backgroundColor: Theme.of(context)
+                        .colorScheme
+                        .surfaceContainer,
                     selectedIndex: tab,
                     onDestinationSelected: (index) =>
                         setState(() => tab = index),
@@ -121,19 +140,24 @@ class _ShopShellState extends State<ShopShell> {
                       ),
                     ),
                     destinations: [
-                      const NavigationRailDestination(
-                        icon: Icon(Icons.grid_view_outlined),
-                        selectedIcon: Icon(Icons.grid_view_rounded),
-                        label: Text('Explore'),
+                      NavigationRailDestination(
+                        icon: const Icon(Icons.grid_view_outlined),
+                        selectedIcon: const Icon(Icons.grid_view_rounded),
+                        label: Text(context.l10n.t('explore')),
+                      ),
+                      NavigationRailDestination(
+                        icon: const Icon(Icons.favorite_border_rounded),
+                        selectedIcon: const Icon(Icons.favorite_rounded),
+                        label: Text(context.l10n.t('saved')),
                       ),
                       NavigationRailDestination(
                         icon: CartIcon(count: count),
-                        label: const Text('Cart'),
+                        label: Text(context.l10n.t('cart')),
                       ),
-                      const NavigationRailDestination(
-                        icon: Icon(Icons.person_outline_rounded),
-                        selectedIcon: Icon(Icons.person_rounded),
-                        label: Text('Profile'),
+                      NavigationRailDestination(
+                        icon: const Icon(Icons.person_outline_rounded),
+                        selectedIcon: const Icon(Icons.person_rounded),
+                        label: Text(context.l10n.t('profile')),
                       ),
                     ],
                   ),

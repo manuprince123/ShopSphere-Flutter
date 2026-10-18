@@ -3,9 +3,11 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 import '../../../core/di/locator.dart';
+import '../../../core/l10n/app_localizations.dart';
 import '../../../core/theme/app_theme.dart';
 import '../../../core/widgets/state_views.dart';
 import '../../cart/presentation/cart_controller.dart';
+import '../../wishlist/presentation/wishlist_controller.dart';
 import '../domain/product.dart';
 import 'product_controller.dart';
 
@@ -14,7 +16,7 @@ class ProductDetailPage extends StatelessWidget {
   final int productId;
   @override
   Widget build(BuildContext context) => Scaffold(
-    appBar: AppBar(title: const Text('Product details')),
+    appBar: AppBar(title: Text(context.l10n.t('productDetails'))),
     body: ProductDetailContent(productId: productId),
   );
 }
@@ -36,8 +38,8 @@ class ProductDetailContent extends StatelessWidget {
                 ? Icons.inventory_2_outlined
                 : Icons.wifi_off_rounded,
             title: controller.failure?.kind.name == 'notFound'
-                ? 'Product not found'
-                : 'Could not load product',
+                ? context.l10n.t('productNotFound')
+                : context.l10n.t('couldNotLoadProduct'),
             message: controller.failure!.message,
             onRetry: () => controller.load(productId),
           ),
@@ -79,15 +81,20 @@ class _ProductDetailBodyState extends State<_ProductDetailBody> {
               child: PageView.builder(
                 itemCount: images.length,
                 onPageChanged: (index) => setState(() => imageIndex = index),
-                itemBuilder: (_, index) => CachedNetworkImage(
-                  imageUrl: images[index],
-                  fit: BoxFit.contain,
-                  placeholder: (_, _) => const Center(
-                    child: CircularProgressIndicator(strokeWidth: 2),
-                  ),
-                  errorWidget: (_, _, _) =>
-                      const Icon(Icons.image_not_supported_outlined),
-                ),
+                itemBuilder: (_, index) {
+                  final image = CachedNetworkImage(
+                    imageUrl: images[index],
+                    fit: BoxFit.contain,
+                    placeholder: (_, _) => const Center(
+                      child: CircularProgressIndicator(strokeWidth: 2),
+                    ),
+                    errorWidget: (_, _, _) =>
+                        const Icon(Icons.image_not_supported_outlined),
+                  );
+                  return index == 0
+                      ? Hero(tag: 'product-${product.id}', child: image)
+                      : image;
+                },
               ),
             ),
           ),
@@ -115,6 +122,22 @@ class _ProductDetailBodyState extends State<_ProductDetailBody> {
             ),
           ),
         const SizedBox(height: 16),
+        Align(
+          alignment: Alignment.centerRight,
+          child: Consumer<WishlistController>(
+            builder: (context, wishlist, _) {
+              final saved = wishlist.contains(product.id);
+              return IconButton.filledTonal(
+                tooltip: context.l10n.t(saved ? 'removeSaved' : 'saveItem'),
+                onPressed: () => wishlist.toggle(product),
+                icon: Icon(
+                  saved ? Icons.favorite : Icons.favorite_border,
+                  color: saved ? AppTheme.coral : null,
+                ),
+              );
+            },
+          ),
+        ),
         if (product.brand?.isNotEmpty == true)
           Text(
             product.brand!.toUpperCase(),
@@ -133,7 +156,7 @@ class _ProductDetailBodyState extends State<_ProductDetailBody> {
           children: [
             const Icon(Icons.star_rounded, color: Color(0xFFE9A63B), size: 20),
             Text(
-              ' ${product.rating.toStringAsFixed(1)}  ·  ${product.reviews.length} reviews',
+              ' ${product.rating.toStringAsFixed(1)}  ·  ${product.reviews.length} ${context.l10n.t('reviews')}',
             ),
           ],
         ),
@@ -171,7 +194,9 @@ class _ProductDetailBodyState extends State<_ProductDetailBody> {
         ),
         const SizedBox(height: 12),
         Text(
-          product.stock > 0 ? '${product.stock} in stock' : 'Out of stock',
+          product.stock > 0
+              ? context.l10n.inStock(product.stock)
+              : context.l10n.t('outOfStock'),
           style: TextStyle(
             fontWeight: FontWeight.w700,
             color: product.stock > 0
@@ -180,7 +205,10 @@ class _ProductDetailBodyState extends State<_ProductDetailBody> {
           ),
         ),
         const SizedBox(height: 22),
-        Text('About this item', style: Theme.of(context).textTheme.titleLarge),
+        Text(
+          context.l10n.t('aboutItem'),
+          style: Theme.of(context).textTheme.titleLarge,
+        ),
         const SizedBox(height: 8),
         Text(product.description),
         const SizedBox(height: 28),
@@ -188,7 +216,7 @@ class _ProductDetailBodyState extends State<_ProductDetailBody> {
           children: [
             _quantityButton(
               Icons.remove,
-              'Decrease quantity',
+              context.l10n.t('decreaseQuantity'),
               quantity > 1 ? () => setState(() => quantity--) : null,
             ),
             SizedBox(
@@ -201,7 +229,7 @@ class _ProductDetailBodyState extends State<_ProductDetailBody> {
             ),
             _quantityButton(
               Icons.add,
-              'Increase quantity',
+              context.l10n.t('increaseQuantity'),
               quantity < product.stock
                   ? () => setState(() => quantity++)
                   : null,
@@ -228,15 +256,18 @@ class _ProductDetailBodyState extends State<_ProductDetailBody> {
                         }
                       },
                 icon: const Icon(Icons.add_shopping_cart_rounded),
-                label: const Text('Add to cart'),
+                label: Text(context.l10n.t('addToCart')),
               ),
             ),
           ],
         ),
         const SizedBox(height: 32),
-        Text('Customer reviews', style: Theme.of(context).textTheme.titleLarge),
+        Text(
+          context.l10n.t('customerReviews'),
+          style: Theme.of(context).textTheme.titleLarge,
+        ),
         const SizedBox(height: 12),
-        if (product.reviews.isEmpty) const Text('No reviews yet.'),
+        if (product.reviews.isEmpty) Text(context.l10n.t('noReviews')),
         for (final review in product.reviews)
           Card(
             margin: const EdgeInsets.only(bottom: 10),

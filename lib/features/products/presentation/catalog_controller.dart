@@ -9,9 +9,9 @@ import '../domain/product_repository.dart';
 enum CatalogStatus { loading, ready, empty, failure }
 
 class CatalogController extends ChangeNotifier {
-  CatalogController(this.repository, this.getProducts);
-  final ProductRepository repository;
+  CatalogController(this.getProducts, this.getCategories);
   final GetProducts getProducts;
+  final GetCategories getCategories;
 
   CatalogStatus status = CatalogStatus.loading;
   List<Product> products = [];
@@ -22,6 +22,7 @@ class CatalogController extends ChangeNotifier {
   String? category;
   ProductSort sort = ProductSort.featured;
   bool loadingMore = false;
+  bool isOffline = false;
   int total = 0;
   Timer? _debounce;
   int _generation = 0;
@@ -34,7 +35,7 @@ class CatalogController extends ChangeNotifier {
   }
 
   Future<void> loadCategories() async {
-    final result = await repository.getCategories();
+    final result = await getCategories();
     if (_disposed) return;
     if (result case Success<List<Category>>(:final value)) {
       categories = value;
@@ -49,6 +50,7 @@ class CatalogController extends ChangeNotifier {
     final generation = ++_generation;
     status = CatalogStatus.loading;
     loadingMore = false;
+    isOffline = false;
     failure = null;
     notifyListeners();
     final result = await getProducts(
@@ -58,6 +60,7 @@ class CatalogController extends ChangeNotifier {
     if (result case Success<ProductPage>(:final value)) {
       products = value.products;
       total = value.total;
+      isOffline = value.isCached;
       status = products.isEmpty ? CatalogStatus.empty : CatalogStatus.ready;
     } else {
       failure = (result as Failed<ProductPage>).failure;
@@ -88,6 +91,7 @@ class CatalogController extends ChangeNotifier {
     if (result case Success<ProductPage>(:final value)) {
       products = [...products, ...value.products];
       total = value.total;
+      isOffline = value.isCached;
     } else {
       failure = (result as Failed<ProductPage>).failure;
     }

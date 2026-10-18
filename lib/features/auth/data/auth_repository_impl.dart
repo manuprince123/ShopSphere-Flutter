@@ -1,13 +1,12 @@
-import 'package:dio/dio.dart';
-
 import '../../../core/error/failure.dart';
 import '../../../core/error/failure_mapper.dart';
 import '../domain/auth.dart';
+import 'auth_remote_data_source.dart';
 import 'token_store.dart';
 
 class AuthRepositoryImpl implements AuthRepository {
-  const AuthRepositoryImpl(this.dio, this.tokenStore);
-  final Dio dio;
+  const AuthRepositoryImpl(this.remoteDataSource, this.tokenStore);
+  final AuthRemoteDataSource remoteDataSource;
   final TokenStore tokenStore;
 
   @override
@@ -17,25 +16,9 @@ class AuthRepositoryImpl implements AuthRepository {
   @override
   Future<Result<AuthUser>> login(String username, String password) async {
     try {
-      final response = await dio.post<Map<String, dynamic>>(
-        '/auth/login',
-        data: {'username': username, 'password': password, 'expiresInMins': 30},
-      );
-      final data = response.data!;
-      await tokenStore.save(
-        data['accessToken'] as String,
-        data['refreshToken'] as String,
-      );
-      return Success(
-        AuthUser(
-          id: data['id'] as int,
-          firstName: data['firstName'] as String? ?? '',
-          lastName: data['lastName'] as String? ?? '',
-          email: data['email'] as String? ?? '',
-          phone: data['phone'] as String? ?? '',
-          image: data['image'] as String? ?? '',
-        ),
-      );
+      final session = await remoteDataSource.login(username, password);
+      await tokenStore.save(session.accessToken, session.refreshToken);
+      return Success(session.user);
     } catch (error) {
       return Failed(mapFailure(error));
     }

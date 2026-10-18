@@ -19,3 +19,9 @@ class GetProduct {
   final ProductRepository repository;
   Future<Result<Product>> call(int id) => repository.getProduct(id);
 }
+
+class GetCategories {
+  const GetCategories(this.repository);
+  final ProductRepository repository;
+  Future<Result<List<Category>>> call() => repository.getCategories();
+}

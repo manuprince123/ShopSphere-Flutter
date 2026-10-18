@@ -2,8 +2,10 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
+import '../../../core/l10n/app_localizations.dart';
 import '../../../core/theme/app_theme.dart';
 import '../../../core/widgets/state_views.dart';
+import '../../wishlist/presentation/wishlist_controller.dart';
 import '../domain/product.dart';
 import 'catalog_controller.dart';
 
@@ -50,7 +52,7 @@ class _CatalogPageState extends State<CatalogPage> {
           ),
           child: compactHeight
               ? Text(
-                  'ShopSphere',
+                  context.l10n.t('appName'),
                   style: Theme.of(context).textTheme.titleLarge,
                 )
               : Row(
@@ -60,7 +62,7 @@ class _CatalogPageState extends State<CatalogPage> {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text(
-                            'SHOPSPHERE',
+                            context.l10n.t('appName').toUpperCase(),
                             style: TextStyle(
                               color: AppTheme.jade,
                               fontWeight: FontWeight.w800,
@@ -70,7 +72,7 @@ class _CatalogPageState extends State<CatalogPage> {
                           ),
                           const SizedBox(height: 4),
                           Text(
-                            'Discover your next find',
+                            context.l10n.t('discover'),
                             style: Theme.of(context).textTheme.headlineMedium,
                           ),
                         ],
@@ -92,12 +94,12 @@ class _CatalogPageState extends State<CatalogPage> {
               catalog.setSearch(value);
             },
             decoration: InputDecoration(
-              hintText: 'Search products',
+              hintText: context.l10n.t('searchProducts'),
               prefixIcon: const Icon(Icons.search_rounded),
               suffixIcon: searchController.text.isEmpty
                   ? null
                   : IconButton(
-                      tooltip: 'Clear search',
+                      tooltip: context.l10n.t('clearSearch'),
                       icon: const Icon(Icons.close),
                       onPressed: () {
                         searchController.clear();
@@ -108,6 +110,35 @@ class _CatalogPageState extends State<CatalogPage> {
             ),
           ),
         ),
+        AnimatedSwitcher(
+          duration: const Duration(milliseconds: 220),
+          child: catalog.isOffline
+              ? Container(
+                  key: const ValueKey('offline-banner'),
+                  width: double.infinity,
+                  margin: const EdgeInsets.fromLTRB(20, 10, 20, 0),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 14,
+                    vertical: 10,
+                  ),
+                  decoration: BoxDecoration(
+                    color: Theme.of(context).colorScheme.tertiaryContainer,
+                    borderRadius: BorderRadius.circular(14),
+                  ),
+                  child: Row(
+                    children: [
+                      const Icon(Icons.cloud_off_outlined, size: 20),
+                      const SizedBox(width: 9),
+                      Expanded(child: Text(context.l10n.t('offlineBanner'))),
+                      TextButton(
+                        onPressed: catalog.load,
+                        child: Text(context.l10n.t('retry')),
+                      ),
+                    ],
+                  ),
+                )
+              : const SizedBox.shrink(key: ValueKey('online')),
+        ),
         SizedBox(height: compactHeight ? 6 : 14),
         SizedBox(
           height: 48,
@@ -115,12 +146,12 @@ class _CatalogPageState extends State<CatalogPage> {
             scrollDirection: Axis.horizontal,
             padding: const EdgeInsets.symmetric(horizontal: 20),
             children: [
-              _chip(context, catalog, null, 'All'),
+              _chip(context, catalog, null, context.l10n.t('all')),
               for (final category in catalog.categories)
                 _chip(context, catalog, category.slug, category.name),
               if (catalog.categoriesFailure != null)
                 ActionChip(
-                  label: const Text('Retry categories'),
+                  label: Text(context.l10n.t('retryCategories')),
                   avatar: const Icon(Icons.refresh, size: 18),
                   onPressed: catalog.loadCategories,
                 ),
@@ -139,36 +170,36 @@ class _CatalogPageState extends State<CatalogPage> {
               Expanded(
                 child: Text(
                   catalog.status == CatalogStatus.ready
-                      ? '${catalog.total} products'
-                      : 'Curated for you',
+                      ? context.l10n.productCount(catalog.total)
+                      : context.l10n.t('curated'),
                   style: Theme.of(context).textTheme.titleMedium,
                 ),
               ),
               PopupMenuButton<ProductSort>(
-                tooltip: 'Sort products',
+                tooltip: context.l10n.t('sortProducts'),
                 icon: const Icon(Icons.tune_rounded),
                 initialValue: catalog.sort,
                 onSelected: catalog.setSort,
-                itemBuilder: (_) => const [
+                itemBuilder: (_) => [
                   PopupMenuItem(
                     value: ProductSort.featured,
-                    child: Text('Featured'),
+                    child: Text(context.l10n.t('featured')),
                   ),
                   PopupMenuItem(
                     value: ProductSort.priceLow,
-                    child: Text('Price: low to high'),
+                    child: Text(context.l10n.t('priceLow')),
                   ),
                   PopupMenuItem(
                     value: ProductSort.priceHigh,
-                    child: Text('Price: high to low'),
+                    child: Text(context.l10n.t('priceHigh')),
                   ),
                   PopupMenuItem(
                     value: ProductSort.rating,
-                    child: Text('Top rated'),
+                    child: Text(context.l10n.t('topRated')),
                   ),
                   PopupMenuItem(
                     value: ProductSort.title,
-                    child: Text('Title: A to Z'),
+                    child: Text(context.l10n.t('titleSort')),
                   ),
                 ],
               ),
@@ -178,10 +209,10 @@ class _CatalogPageState extends State<CatalogPage> {
         Expanded(
           child: switch (catalog.status) {
             CatalogStatus.loading => const LoadingCards(),
-            CatalogStatus.empty => const EmptyView(
+            CatalogStatus.empty => EmptyView(
               icon: Icons.search_off_rounded,
-              title: 'No products found',
-              message: 'Try another search or category.',
+              title: context.l10n.t('noProducts'),
+              message: context.l10n.t('trySearch'),
             ),
             CatalogStatus.failure => ErrorView(
               message: catalog.failure!.message,
@@ -213,9 +244,13 @@ class _CatalogPageState extends State<CatalogPage> {
         },
         showCheckmark: false,
         selectedColor: AppTheme.jade,
-        labelStyle: TextStyle(color: selected ? Colors.white : AppTheme.ink),
+        labelStyle: TextStyle(
+          color: selected
+              ? Colors.white
+              : Theme.of(context).colorScheme.onSurface,
+        ),
         side: BorderSide.none,
-        backgroundColor: Colors.white,
+        backgroundColor: Theme.of(context).colorScheme.surfaceContainer,
       ),
     );
   }
@@ -288,7 +323,7 @@ class _CatalogPageState extends State<CatalogPage> {
           child: TextButton.icon(
             onPressed: catalog.retryLoadMore,
             icon: const Icon(Icons.refresh),
-            label: const Text('Retry loading more'),
+            label: Text(context.l10n.t('retryLoadingMore')),
           ),
         );
 }
@@ -314,13 +349,16 @@ class ProductCard extends StatelessWidget {
                 Positioned.fill(
                   child: ColoredBox(
                     color: const Color(0xFFF1F3EE),
-                    child: CachedNetworkImage(
-                      imageUrl: product.thumbnail,
-                      fit: BoxFit.contain,
-                      errorWidget: (_, _, _) =>
-                          const Icon(Icons.image_not_supported_outlined),
-                      placeholder: (_, _) => const Center(
-                        child: CircularProgressIndicator(strokeWidth: 2),
+                    child: Hero(
+                      tag: 'product-${product.id}',
+                      child: CachedNetworkImage(
+                        imageUrl: product.thumbnail,
+                        fit: BoxFit.contain,
+                        errorWidget: (_, _, _) =>
+                            const Icon(Icons.image_not_supported_outlined),
+                        placeholder: (_, _) => const Center(
+                          child: CircularProgressIndicator(strokeWidth: 2),
+                        ),
                       ),
                     ),
                   ),
@@ -350,6 +388,25 @@ class ProductCard extends StatelessWidget {
                       ),
                     ),
                   ),
+                Positioned(
+                  top: 6,
+                  right: 6,
+                  child: Consumer<WishlistController>(
+                    builder: (context, wishlist, _) {
+                      final saved = wishlist.contains(product.id);
+                      return IconButton.filledTonal(
+                        tooltip: context.l10n.t(
+                          saved ? 'removeSaved' : 'saveItem',
+                        ),
+                        onPressed: () => wishlist.toggle(product),
+                        icon: Icon(
+                          saved ? Icons.favorite : Icons.favorite_border,
+                          color: saved ? AppTheme.coral : null,
+                        ),
+                      );
+                    },
+                  ),
+                ),
               ],
             ),
           ),

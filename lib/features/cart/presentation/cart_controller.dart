@@ -7,8 +7,15 @@ import '../domain/cart.dart';
 enum CheckoutStatus { idle, processing, success, failure }
 
 class CartController extends ChangeNotifier {
-  CartController(this.repository, this.calculateTotals);
-  final CartRepository repository;
+  CartController(
+    this.loadCart,
+    this.saveCart,
+    this.placeOrderUseCase,
+    this.calculateTotals,
+  );
+  final LoadCart loadCart;
+  final SaveCart saveCart;
+  final PlaceOrder placeOrderUseCase;
   final CalculateCartTotals calculateTotals;
 
   List<CartItem> items = [];
@@ -21,7 +28,7 @@ class CartController extends ChangeNotifier {
   CartTotals get totals => calculateTotals(items);
 
   Future<void> initialize() async {
-    items = await repository.load();
+    items = await loadCart();
     loaded = true;
     notifyListeners();
   }
@@ -39,7 +46,7 @@ class CartController extends ChangeNotifier {
     }
     items = next;
     notifyListeners();
-    await repository.save(items);
+    await saveCart(items);
   }
 
   Future<void> update(int productId, int quantity) async {
@@ -55,7 +62,7 @@ class CartController extends ChangeNotifier {
     }
     items = next;
     notifyListeners();
-    await repository.save(items);
+    await saveCart(items);
   }
 
   Future<bool> placeOrder(int userId) async {
@@ -65,11 +72,11 @@ class CartController extends ChangeNotifier {
     checkoutStatus = CheckoutStatus.processing;
     checkoutFailure = null;
     notifyListeners();
-    final result = await repository.placeOrder(userId, items);
+    final result = await placeOrderUseCase(userId, items);
     if (result case Success<int>(:final value)) {
       orderId = value;
       items = [];
-      await repository.save(items);
+      await saveCart(items);
       checkoutStatus = CheckoutStatus.success;
       notifyListeners();
       return true;
@@ -86,7 +93,7 @@ class CartController extends ChangeNotifier {
     checkoutStatus = CheckoutStatus.idle;
     orderId = null;
     notifyListeners();
-    await repository.save(items);
+    await saveCart(items);
   }
 
   void resetCheckout() {
