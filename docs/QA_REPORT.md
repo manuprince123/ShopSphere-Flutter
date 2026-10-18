@@ -93,4 +93,4 @@ Use a test device for the integration scenario: it clears this app's tokens/cart
 
 ## Remaining submission work
 
-The local APK, implementation, device QA and screenshots are complete. A 2–4 minute demo video, repository publication, GitHub Release `v1.0.0` attachment, Drive upload/sharing, incognito link verification, final contact details and submission email remain. None are claimed completed by this report.
+The local APK, implementation, device QA, screenshots, public repository and GitHub Release are complete. A 2–4 minute demo video, Drive upload/sharing, incognito verification of the final links, and submission email remain. None are claimed completed by this report.

@@ -1,10 +1,12 @@
 # ShopSphere
 
+[![Flutter checks](https://github.com/manuprince123/ShopSphere-Flutter/actions/workflows/flutter.yml/badge.svg)](https://github.com/manuprince123/ShopSphere-Flutter/actions/workflows/flutter.yml)
+
 ShopSphere is a Material 3 shopping app for the Prosessed Flutter Developer Intern assignment. It uses the public DummyJSON API for sign-in, product discovery, profile and simulated checkout. The app includes persistent cart and saved items, an offline product cache, dark mode, and English/Hindi UI. It is designed for phones and tablets, with a navigation rail and a side-by-side product view on wide layouts.
 
-> **Submission status:** Implementation and local QA are complete. The release APK is signature-verified and install-tested on Android 8.0 phone and tablet emulators; screenshots and live API error evidence are included. The demo video, remote release/Drive upload, and final public-link checks are the remaining submission steps. The confidential assignment brief is intentionally excluded from this repository.
+> **Submission status:** Implementation and local QA are complete. The repository is public, and the release APK is signature-verified and install-tested on Android 8.0 phone and tablet emulators. Screenshots and live API error evidence are included. The demo video, Drive upload, and final public-link checks are the remaining submission steps. The confidential assignment brief is intentionally excluded from this repository.
 
-Local APK: `release/ShopSphere_Manu_R_v1.0.0.apk` (55,603,930 bytes; build artifact, not committed). Published APK and demo-video links are pending. See the [device QA report](docs/QA_REPORT.md) for tested flows, artifact checksum and reproduction commands.
+Release APK: [ShopSphere v1.0.0](https://github.com/manuprince123/ShopSphere-Flutter/releases/tag/v1.0.0) (55,603,930 bytes). The demo-video link is pending. See the [device QA report](docs/QA_REPORT.md) for tested flows, artifact checksum and reproduction commands.
 
 ## Screenshots
 
@@ -34,7 +36,7 @@ See the [screenshot index](screenshots/README.md) for profile, airplane-mode rec
 | Persistent cart, totals, badge, simulated checkout and confirmation | Implemented; Android restart and checkout checks pass |
 | Profile via `/auth/me`, logout, token refresh and expiry handling | Implemented; unit tests and live invalid-refresh check pass |
 | Phone grid/bottom navigation, tablet rail and wide master-detail layout | Verified in phone/tablet portrait and landscape, including 1.3× text |
-| GitHub Actions for format, analysis and tests | Configured; remote run pending |
+| GitHub Actions for format, analysis and tests | Configured for every push and pull request |
 | Automatic token refresh and one-time protected-request retry | Implemented; successful refresh and invalid-refresh paths tested |
 | Persistent wishlist and offline product/category/detail cache | Implemented; restart and airplane-mode fallback verified |
 | Dark theme, English/Hindi localization and product Hero transition | Implemented; preferences persist across restart |
