@@ -57,16 +57,16 @@ The shared `mapFailure` function converts Dio timeouts, socket errors, HTTP 400/
 ## Getting started
 
 1. Install the current stable Flutter SDK and Android SDK (Android API 26+ support).
-2. Run `flutter pub get`.
-3. Run `flutter run` and sign in with the test account below.
+2. Clone this repository, change into its root directory, and run `flutter pub get`.
+3. Connect an Android device or start an emulator; run `flutter run` and sign in with the test account below.
 4. Run `dart format lib test`, `flutter analyze` and `flutter test`.
 5. Build with `flutter build apk --release`.
 
-No code generation is used. The Android and iOS platform projects are generated with `flutter create .` for a fresh checkout if they are not already included.
+No code generation is used. The Android and iOS platform projects are included in this repository.
 
 ## Testing
 
-Run `flutter test --coverage`. **55 tests pass**, covering JSON fixtures, repository success and failure paths, validation, failure mapping, controller state transitions, cart totals, checkout, and large-text layout. The sign-in-to-order widget flow is also tested at 1.3× text scale. The current line coverage is **76.3%** (875 of 1,147 measured lines). `flutter analyze` reports zero issues.
+Run `flutter test --coverage`. **57 tests pass**, covering JSON fixtures, repository success and failure paths, validation, failure mapping, controller state transitions, cart totals, checkout, and large-text layout. Widget flows cover a narrow phone, medium tablet and wide landscape layout at 1.3× text scale. The current line coverage is **80.0%** (918 of 1,147 measured lines). `flutter analyze` reports zero issues.
 
 ## Test credentials
 
