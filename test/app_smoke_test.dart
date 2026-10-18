@@ -192,4 +192,44 @@ void main() {
     expect(find.text('Emily Johnson'), findsOneWidget);
     expect(find.text('555-0101'), findsOneWidget);
   });
+
+  for (final size in [const Size(800, 1100), const Size(1200, 700)]) {
+    testWidgets(
+      'catalogue adapts to ${size.width}×${size.height} at 1.3× text',
+      (tester) async {
+        await tester.binding.setSurfaceSize(size);
+        addTearDown(() => tester.binding.setSurfaceSize(null));
+        registerFakes(
+          FakeProductRepository(withProduct: true),
+          FakeCartRepository(),
+        );
+
+        await tester.pumpWidget(
+          MediaQuery(
+            data: MediaQueryData(
+              size: size,
+              textScaler: const TextScaler.linear(1.3),
+            ),
+            child: const ShopSphereApp(),
+          ),
+        );
+        await tester.pumpAndSettle();
+        await tester.enterText(find.byType(TextFormField).first, 'emilys');
+        await tester.enterText(find.byType(TextFormField).last, 'emilyspass');
+        await tester.tap(find.text('Sign in'));
+        await advance(tester);
+
+        expect(find.byType(NavigationRail), findsOneWidget);
+        expect(find.byType(NavigationBar), findsNothing);
+        expect(find.text('Everyday Backpack'), findsOneWidget);
+        if (size.width > 1024) {
+          expect(find.text('Select a product to see details'), findsOneWidget);
+          await tester.tap(find.text('Everyday Backpack'));
+          await advance(tester);
+          expect(find.text('About this item'), findsOneWidget);
+        }
+        expect(tester.takeException(), isNull);
+      },
+    );
+  }
 }
