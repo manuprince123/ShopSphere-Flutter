@@ -9,9 +9,11 @@ These are actual Android emulator captures, not mockups. `phone/` and `tablet/` 
 3. [Persisted cart and badge](phone/03-cart.png)
 4. [Order confirmation](phone/04-order-confirmation.png)
 5. [Profile](phone/05-profile.png)
-6. [Airplane-mode error](phone/06-offline.png)
-7. [Landscape at 1.3× text, scrolled to reachable retry](phone/07-landscape-large-text-offline.png)
-8. [Portrait at 1.3× text, successful retry after network restoration](phone/08-large-text-recovered.png)
+6. [Persistent saved item](phone/06-saved.png)
+7. [Airplane-mode cached catalogue and offline banner](phone/06-offline.png)
+8. [Landscape at 1.3× text, scrolled to reachable retry](phone/07-landscape-large-text-offline.png)
+9. [Portrait at 1.3× text, successful retry after network restoration](phone/08-large-text-recovered.png)
+10. [Persistent dark-mode preference](phone/09-dark-mode.png)
 
 ## Tablet release app
 
@@ -27,6 +29,6 @@ Both use 1.3× system text on a Pixel C API 26 emulator.
 3. [HTTP 404 product not found](qa/03-product-not-found.png)
 4. [Three-second network delay skeleton](qa/04-slow-network-loader.png)
 5. [Receive timeout and retry](qa/05-timeout.png)
-6. [HTTP 401 session expiry](qa/06-session-expired.png)
+6. [Protected request, rejected refresh and safe session expiry](qa/06-session-expired.png)
 
 See [QA report](../docs/QA_REPORT.md) for device dimensions, tested scope and distinctions between release checks and the test entry point.
