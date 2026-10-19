@@ -92,6 +92,6 @@ Use a test device for the integration scenario: it clears this app's tokens/cart
 - Unsigned iOS release compilation: passed in macOS GitHub Actions.
 - Capture inventory: ten phone images, two tablet images, six integration-test images.
 
-## Remaining submission work
+## Submission readiness
 
-The local APK, implementation, device QA, screenshots, public repository and GitHub Release are complete. A 2–4 minute demo video, Drive upload/sharing, incognito verification of the final links, and submission email remain. None are claimed completed by this report.
+The local APK, implementation, device QA, screenshots, public repository and GitHub Release are complete. The 3:54 demo video, APK and screenshot folders are uploaded to the public Google Drive submission folder. The candidate should perform one final incognito check of every submitted link and send the submission email before the deadline.
