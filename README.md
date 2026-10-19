@@ -1,12 +1,12 @@
 # ShopSphere
 
-[![Flutter checks](https://github.com/manuprince123/ShopSphere-Flutter/actions/workflows/flutter.yml/badge.svg)](https://github.com/manuprince123/ShopSphere-Flutter/actions/workflows/flutter.yml)
+[![Flutter checks](https://github.com/manuprince123/prosessed-flutter-assignment/actions/workflows/flutter.yml/badge.svg)](https://github.com/manuprince123/prosessed-flutter-assignment/actions/workflows/flutter.yml)
 
 ShopSphere is a Material 3 shopping app for the Prosessed Flutter Developer Intern assignment. It uses the public DummyJSON API for sign-in, product discovery, profile and simulated checkout. The app includes persistent cart and saved items, an offline product cache, dark mode, and English/Hindi UI. It is designed for phones and tablets, with a navigation rail and a side-by-side product view on wide layouts.
 
 > **Submission status:** Implementation and local QA are complete. The repository is public, and the release APK is signature-verified and install-tested on Android 8.0 phone and tablet emulators. Screenshots and live API error evidence are included. The demo video, Drive upload, and final public-link checks are the remaining submission steps. The confidential assignment brief is intentionally excluded from this repository.
 
-Release APK: [ShopSphere v1.0.0](https://github.com/manuprince123/ShopSphere-Flutter/releases/tag/v1.0.0) (55,603,930 bytes). The demo-video link is pending. See the [device QA report](docs/QA_REPORT.md) for tested flows, artifact checksum and reproduction commands.
+Release APK: [ShopSphere v1.0.0](https://github.com/manuprince123/prosessed-flutter-assignment/releases/tag/v1.0.0) (55,603,930 bytes). The demo-video link is pending. See the [device QA report](docs/QA_REPORT.md) for tested flows, artifact checksum and reproduction commands.
 
 ## Screenshots
 

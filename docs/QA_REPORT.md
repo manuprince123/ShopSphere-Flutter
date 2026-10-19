@@ -68,7 +68,7 @@ Evidence: [request/results JSON](live-api-results.json) and [screenshots](../scr
 
 ## iOS build verification
 
-The local QA host has Apple Command Line Tools but not full Xcode, so iOS compilation is verified by the repository's macOS GitHub Actions job. `flutter build ios --release --no-codesign` passed on run [39140134519](https://github.com/manuprince123/ShopSphere-Flutter/actions/runs/39140134519). This verifies compilation only; no iOS device or signed-distribution claim is made.
+The local QA host has Apple Command Line Tools but not full Xcode, so iOS compilation is verified by the repository's macOS GitHub Actions job. `flutter build ios --release --no-codesign` passed on run [39140134519](https://github.com/manuprince123/prosessed-flutter-assignment/actions/runs/39140134519). This verifies compilation only; no iOS device or signed-distribution claim is made.
 
 The emulator environment temporarily lost DNS resolution. Host HTTPS and emulator IP connectivity still worked. Restarting the test AVDs with `-dns-server 8.8.8.8,1.1.1.1` restored name resolution; the live suite subsequently passed.
 
